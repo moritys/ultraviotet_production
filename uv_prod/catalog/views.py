@@ -1,5 +1,6 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def product_list(request):
-    return HttpResponse('Catalog')
+    template_name = 'catalog.html'
+    return render(request, template_name)
