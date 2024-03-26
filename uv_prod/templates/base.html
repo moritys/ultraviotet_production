@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru" class="has-navbar-fixed-top">
   <head>
@@ -6,13 +7,14 @@
     <title>
       {% block title %}ヽ(•‿•)ノ{% endblock %}
     </title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="icon" href="{% static 'img/fav.png' %}" type="image">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
   </head>
   <body>
     {% include "includes/header.html" %}
     <main>
       {% block content %}Контента пока нет :({% endblock %}
     </main>
-    {% include "includes/footer.html" %}
+    {% comment %} {% include "includes/footer.html" %} {% endcomment %}
   </body>
 </html>

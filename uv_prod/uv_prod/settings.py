@@ -53,6 +53,10 @@ TEMPLATES = [
     }
 ]
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static_dev',
+]
+
 WSGI_APPLICATION = 'uv_prod.wsgi.application'
 
 

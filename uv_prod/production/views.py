@@ -1,5 +1,6 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def production(request):
-    return HttpResponse('Production')
+    template_name = 'production.html'
+    return render(request, template_name)

@@ -1,5 +1,6 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def shopping(request):
-    return HttpResponse('Shopping')
+    template_name = 'shopping.html'
+    return render(request, template_name)
