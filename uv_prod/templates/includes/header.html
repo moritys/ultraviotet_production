@@ -1,38 +1,39 @@
 {% load static %}
 {% with request.resolver_match.view_name as view_name %}
 <header>
-  <nav class="navbar is-fixed-top is-dark" role="navigation" aria-label="main navigation">
+  <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item">
-        <img src="{% static 'img/logo.png' %}">
-      </a>
-
-      <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
       </a>
-
-    <div id="navMenu" class="navbar-menu">
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item {% if view_name  == 'homepage:index' %}is-active {% endif %}"
           href="{% url 'homepage:index' %}">
           Главная
         </a>
+  
         <a class="navbar-item {% if view_name  == 'catalog:product_list' %}is-active{% endif %}"
         href="{% url 'catalog:product_list' %}">
           Компоненты на складе
         </a>
+
         <a class="navbar-item {% if view_name  == 'production:production' %}is-active{% endif %}"
         href="{% url 'production:production' %}">
           Производство
         </a>
+
         <a class="navbar-item {% if view_name  == 'shopping:shopping' %}is-active{% endif %}"
         href="{% url 'shopping:shopping' %}">
           Список покупок
         </a>
+        </div>
       </div>
-
+  
       <div class="navbar-end">
         <div class="navbar-item">
           <div class="buttons">
