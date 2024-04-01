@@ -13,6 +13,7 @@ class Component(models.Model):
 class Board(models.Model):
     name = models.CharField(max_length=30)
     components = models.ManyToManyField(Component, through='ComponentQuantity')
+    # status = models.ChoiceField
 
     def __str__(self):
         return self.name
