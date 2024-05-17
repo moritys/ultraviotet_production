@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Board, Production, Stage, StageComponentsQuantity
+
+
+admin.site.register(Board)
+admin.site.register(Production)
+admin.site.register(Stage)
+admin.site.register(StageComponentsQuantity)
