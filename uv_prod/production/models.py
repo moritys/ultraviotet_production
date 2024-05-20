@@ -16,15 +16,14 @@ class Board(models.Model):
 
 class Stage(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название')
-    board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, verbose_name='Плата'
-    )
     component = models.ManyToManyField(
-        Component, through='StageComponentsQuantity', verbose_name='Компонент'
+        Component,
+        through='StageComponentBoardQuantity',
+        verbose_name='Компоненты и платы'
     )
 
     def __str__(self):
-        return f'Этап производства "{self.name}"'
+        return self.name
 
     class Meta:
         verbose_name = 'Этап производства'
@@ -48,12 +47,15 @@ class Production(models.Model):
         verbose_name_plural = 'Текущее производство: статус и количество'
 
 
-class StageComponentsQuantity(models.Model):
+class StageComponentBoardQuantity(models.Model):
     stage = models.ForeignKey(
         Stage, on_delete=models.CASCADE, verbose_name='Этап'
     )
     component = models.ForeignKey(
         Component, on_delete=models.CASCADE, verbose_name='Компонент'
+    )
+    board = models.ForeignKey(
+        Board, on_delete=models.CASCADE, verbose_name='Плата'
     )
     quantity = models.PositiveIntegerField(
         verbose_name='Количество компонента на этап'
@@ -63,3 +65,6 @@ class StageComponentsQuantity(models.Model):
         unique_together = ('component', 'stage')
         verbose_name = 'Схема: Связь этапа и количества компонентов'
         verbose_name_plural = 'Схема: Связь этапа и количества компонентов'
+
+    def __str__(self):
+        return f'{self.board} | {self.stage}: {self.component}, {self.quantity} шт.'
