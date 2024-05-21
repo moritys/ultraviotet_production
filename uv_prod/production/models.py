@@ -4,7 +4,11 @@ from catalog.models import Component
 
 
 class Board(models.Model):
-    name = models.CharField(max_length=30, verbose_name='Название')
+    name = models.CharField(
+        max_length=30,
+        verbose_name='Название',
+        help_text='Уникальное название платы, не более 30 символов'
+    )
 
     def __str__(self):
         return self.name
@@ -15,11 +19,10 @@ class Board(models.Model):
 
 
 class Stage(models.Model):
-    name = models.CharField(max_length=100, verbose_name='Название')
-    component = models.ManyToManyField(
-        Component,
-        through='StageComponentBoardQuantity',
-        verbose_name='Компоненты и платы'
+    name = models.CharField(
+        max_length=256,
+        verbose_name='Название',
+        help_text='Уникальное название этапа, не более 256 символов'
     )
 
     def __str__(self):
@@ -32,15 +35,22 @@ class Stage(models.Model):
 
 class Production(models.Model):
     board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, verbose_name='Плата'
+        Board,
+        on_delete=models.CASCADE,
+        verbose_name='Плата'
     )
     stage = models.ForeignKey(
-        Stage, on_delete=models.CASCADE, verbose_name='Этап производства'
+        Stage,
+        on_delete=models.CASCADE,
+        verbose_name='Этап производства'
     )
-    quantity = models.PositiveIntegerField(verbose_name='Количество на этапе')
+    quantity = models.PositiveIntegerField(
+        verbose_name='Количество на этапе',
+        help_text='Количество заданных плат на этом этапе'
+    )
 
     def __str__(self):
-        return f'Производство: {self.quantity} {self.board}'
+        return f'{self.board.name} - {self.stage.name} - {self.quantity}'
 
     class Meta:
         verbose_name = 'Текущее производство: статус и количество'
@@ -49,22 +59,37 @@ class Production(models.Model):
 
 class StageComponentBoardQuantity(models.Model):
     stage = models.ForeignKey(
-        Stage, on_delete=models.CASCADE, verbose_name='Этап'
+        Stage,
+        on_delete=models.CASCADE,
+        verbose_name='Этап'
     )
     component = models.ForeignKey(
-        Component, on_delete=models.CASCADE, verbose_name='Компонент'
+        Component,
+        blank=True, null=True,
+        on_delete=models.CASCADE,
+        verbose_name='Компонент'
     )
     board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, verbose_name='Плата'
+        Board,
+        on_delete=models.CASCADE,
+        verbose_name='Плата'
     )
     quantity = models.PositiveIntegerField(
         verbose_name='Количество компонента на этап'
     )
 
     class Meta:
-        unique_together = ('component', 'stage')
+        unique_together = ('stage', 'board')
         verbose_name = 'Схема: Связь этапа и количества компонентов'
         verbose_name_plural = 'Схема: Связь этапа и количества компонентов'
 
     def __str__(self):
-        return f'{self.board} | {self.stage}: {self.component}, {self.quantity} шт.'
+        if self.component:
+            return (
+                f'{self.board.name} | {self.stage.name}: '
+                f'{self.component.name}, {self.quantity} шт.'
+            )
+        return (
+                f'{self.board.name} | {self.stage.name}: '
+                f'без компонентов'
+            )
