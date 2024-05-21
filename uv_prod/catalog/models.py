@@ -2,27 +2,30 @@ from django.db import models
 
 
 class Component(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.TextField()
-    quantity = models.PositiveIntegerField()
+    name = models.CharField(
+        max_length=50,
+        verbose_name='Название',
+        help_text='Уникальное название компонента, не более 50 символов'
+        )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Описание',
+        help_text='Не обязательное поле, описание'
+    )
+    quantity = models.PositiveIntegerField(
+        verbose_name='Количество на складе'
+    )
+    critical_quantity = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        verbose_name='Критическое количество',
+        help_text='Когда уже пора заказывать'
+    )
 
     def __str__(self):
         return self.name
-
-
-class Board(models.Model):
-    name = models.CharField(max_length=30)
-    components = models.ManyToManyField(Component, through='ComponentQuantity')
-    # status = models.ChoiceField
-
-    def __str__(self):
-        return self.name
-
-
-class ComponentQuantity(models.Model):
-    component = models.ForeignKey(Component, on_delete=models.CASCADE)
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
-    quantity_used = models.IntegerField()
 
     class Meta:
-        unique_together = ('component', 'board')
+        verbose_name = 'Компонент'
+        verbose_name_plural = 'Компоненты'
