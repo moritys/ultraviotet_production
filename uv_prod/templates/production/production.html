@@ -11,22 +11,10 @@
       <h5 class="subtitle">Количество производимых плат</h5>
 
       <div class="columns">
-        <div class="column">
-          <label class="label">Круглые: 0</label>
-          <div class="field has-addons">
-            <div class="control">
-              <input class="input" type="text" placeholder="100">
-            </div>
-            <div class="control">
-              <button class="button is-info">
-                Добавить
-              </button>
-            </div>
-          </div>
-        </div>
 
+        {% for board in board_list %}
         <div class="column">
-          <label class="label">Квадратные: 0</label>
+          <label class="label">{{ board.name }}: 0</label>
           <div class="field has-addons">
             <div class="control">
               <input class="input" type="text" placeholder="100">
@@ -38,27 +26,45 @@
             </div>
           </div>
         </div>
+        {% endfor %}
 
-        <div class="column">
-          <label class="label">Треугольные: 0</label>
-          <div class="field has-addons">
-            <div class="control">
-              <input class="input" type="text" placeholder="100">
-            </div>
-            <div class="control">
-              <button class="button is-info">
-                Добавить
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </form>
+{% comment %} выше все ок {% endcomment %}
 
-  <div class="tabs is-centered is-boxed">
-    <ul>
-      <li class="is-active"><a>Круглые</a>
+
+<div class="columns">
+  
+  <div class="column">
+
+  <form class="box">
+    <div class="field">
+      <h5 class="subtitle">{{ board.name }}</h5>
+
+      <div class="columns">
+        <div class="column">
+          <div class="field">
+            <h5 class="subtitle">Состояния шлейфа</h5>
+            <label class="label">{{ production.stage }}: 0</label>
+            <div class="field has-addons">
+              <div class="control">
+                <input class="input" type="text" placeholder="100">
+              </div>
+              <div class="control">
+                <button class="button is-info">
+                  Добавить
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </form>
+      
+      
         <div class="columns">
 
         <div class="column">
@@ -66,30 +72,6 @@
             <div class="field">
               <h5 class="subtitle">Состояния шлейфа</h5>
               <label class="label">Шлейф неподрезанный: 0</label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="text" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-info">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-
-              <label class="label">Шлейф подрезанный: 0</label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="text" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-info">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-
-              <label class="label">Шлейф зачищенный: 0</label>
               <div class="field has-addons">
                 <div class="control">
                   <input class="input" type="text" placeholder="100">
@@ -158,13 +140,7 @@
             </div>
           </form>
         </div>
-      </li>
 
-      <li><a>Квадратные</a>
-      </li>
-      <li><a>Треугольные</a>
-      </li>
-    </ul>
   </div>
 </section>
 {% endblock %}

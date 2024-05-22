@@ -27,5 +27,6 @@ class Component(models.Model):
         return self.name
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Компонент'
         verbose_name_plural = 'Компоненты'
