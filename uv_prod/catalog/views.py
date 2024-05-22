@@ -6,7 +6,7 @@ from catalog.models import Component
 def catalog(request):
     template_name = 'catalog.html'
     component_list = Component.objects.values(
-        'name', 'quantity', 'critical_quantity'
+        'name', 'quantity', 'critical_quantity', 'description',
     )
     context = {
         'component_list': component_list,
