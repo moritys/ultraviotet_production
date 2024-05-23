@@ -9,6 +9,11 @@ class Board(models.Model):
         verbose_name='Название',
         help_text='Уникальное название платы, не более 30 символов'
     )
+    slug = models.SlugField(
+        max_length=30,
+        verbose_name='Слаг',
+        help_text='Уникальный слаг платы, не более 30 символов'
+    )
 
     def __str__(self):
         return self.name

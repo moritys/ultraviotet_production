@@ -1,10 +1,7 @@
 {% extends "base.html" %}
+{% with request.resolver_match.view_name as view_name %}
 {% block content %}
 <section class="section">
-
-  {% comment %} <div class="container">
-    <progress class="progress is-success" value="15" max="100">15%</progress>
-  </div> {% endcomment %}
 
   <form class="box">
     <div class="field">
@@ -20,127 +17,27 @@
               <input class="input" type="text" placeholder="100">
             </div>
             <div class="control">
-              <button class="button is-info">
+              <button class="button is-success is-light">
                 Добавить
               </button>
             </div>
+            
           </div>
+          <a class="button is-success is-light is-fullwidth" href="{% url 'production:board_production' board.slug %}" 
+            {% if slug == board.slug %} title="Куда перейти? Ты уже тут" disabled
+            {% endif %}>Перейти
+          </a>
         </div>
         {% endfor %}
-
+        
       </div>
     </div>
   </form>
-{% comment %} выше все ок {% endcomment %}
 
+  {% block production %}
+  {% endblock %}
 
-<div class="columns">
-  
-  <div class="column">
-
-  <form class="box">
-    <div class="field">
-      <h5 class="subtitle">{{ board.name }}</h5>
-
-      <div class="columns">
-        <div class="column">
-          <div class="field">
-            <h5 class="subtitle">Состояния шлейфа</h5>
-            <label class="label">{{ production.stage }}: 0</label>
-            <div class="field has-addons">
-              <div class="control">
-                <input class="input" type="text" placeholder="100">
-              </div>
-              <div class="control">
-                <button class="button is-info">
-                  Добавить
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </form>
-      
-      
-        <div class="columns">
-
-        <div class="column">
-          <form class="box">
-            <div class="field">
-              <h5 class="subtitle">Состояния шлейфа</h5>
-              <label class="label">Шлейф неподрезанный: 0</label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="text" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-info">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-
-        <div class="column">
-          <form class="box">
-            <div class="field">
-              <h5 class="subtitle">Состояния платы</h5>
-              <label class="label">Плата пустая: 0</label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="text" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-info">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-
-              <label class="label">Плата запаянная (с одной стороны): 0</label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="text" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-info">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-
-              <label class="label">Плата запаянная (с обоих сторон): 0</label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="text" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-info">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-
-              <label class="label">Плата обесперемыченная: 0</label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="text" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-info">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-
-  </div>
 </section>
+
 {% endblock %}
+{% endwith %}

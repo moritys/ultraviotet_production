@@ -6,4 +6,5 @@ app_name = 'production'
 
 urlpatterns = [
     path('', views.production, name='production'),
+    path('<slug:slug>/', views.board_production, name='board_production'),
 ]
