@@ -29,11 +29,17 @@ class Stage(models.Model):
         verbose_name='Название',
         help_text='Уникальное название этапа, не более 256 символов'
     )
+    order = models.PositiveSmallIntegerField(
+        verbose_name='Порядок этапа',
+        help_text='Порядок выполнения этапов, от 1 до бесконечности'
+    )
+    cable_stage = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
     class Meta:
+        ordering = ('order',)
         verbose_name = 'Этап производства'
         verbose_name_plural = 'Этапы производства'
 

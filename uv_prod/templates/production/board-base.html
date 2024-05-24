@@ -14,7 +14,7 @@
 
         <div class="column">
         <h5 class="subtitle">Состояние шлейфа</h5>
-          {% for stage in board_scheme_list %}
+          {% for stage in board_scheme_list_cable %}
           <label class="label">{{ stage.stage }}: 0</label>
           <div class="field has-addons">
             <div class="control">
@@ -31,7 +31,7 @@
 
         <div class="column">
             <h5 class="subtitle">Состояние платы</h5>
-              {% for stage in board_scheme_list %}
+              {% for stage in board_scheme_list_board %}
               <label class="label">{{ stage.stage }}: 0</label>
               <div class="field has-addons">
                 <div class="control">

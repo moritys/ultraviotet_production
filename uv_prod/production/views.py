@@ -53,15 +53,20 @@ def board_production(request, slug):
     board = get_object_or_404(Board, slug=slug)
     board_list = Board.objects.all()
 
-    board_scheme_list = StageComponentBoardQuantity.objects.filter(
-        board=board
-    )
     board_production_list = Production.objects.filter(
         board=board
     )
 
+    board_scheme_list_cable = StageComponentBoardQuantity.objects.filter(
+        board=board, stage__cable_stage=True
+    )
+    board_scheme_list_board = StageComponentBoardQuantity.objects.filter(
+        board=board, stage__cable_stage=False
+    )
+
     context = {
-        'board_scheme_list': board_scheme_list,
+        'board_scheme_list_cable': board_scheme_list_cable,
+        'board_scheme_list_board': board_scheme_list_board,
         'board_production_list': board_production_list,
         'board_list': board_list,
         'slug': slug,
