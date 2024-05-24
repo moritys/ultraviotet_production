@@ -69,6 +69,11 @@ class Production(models.Model):
 
 
 class StageComponentBoardQuantity(models.Model):
+    board = models.ForeignKey(
+        Board,
+        on_delete=models.CASCADE,
+        verbose_name='Плата'
+    )
     stage = models.ForeignKey(
         Stage,
         on_delete=models.CASCADE,
@@ -79,11 +84,6 @@ class StageComponentBoardQuantity(models.Model):
         blank=True, null=True,
         on_delete=models.CASCADE,
         verbose_name='Компонент'
-    )
-    board = models.ForeignKey(
-        Board,
-        on_delete=models.CASCADE,
-        verbose_name='Плата'
     )
     quantity = models.PositiveIntegerField(
         verbose_name='Количество компонента на этап'

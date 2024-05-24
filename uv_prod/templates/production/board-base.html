@@ -1,10 +1,41 @@
 {% extends "production/production.html" %}
+{% block content %}
+<section class="section">
+
+  <form class="box">
+    <div class="field">
+      <h5 class="subtitle">Платы в производстве</h5>
+
+      <div class="columns">
+
+        {% for board in board_list %}
+        <div class="column">
+          <label class="label">{{ board.name }}</label>
+          <div class="field has-addons">
+            
+          </div>
+          <a class="button is-success is-light is-fullwidth" href="{% url 'production:board_production' board.slug %}" 
+            {% if slug == board.slug %} title="Куда перейти? Ты уже тут" disabled
+            {% endif %}>Перейти
+          </a>
+        </div>
+        {% endfor %}
+        
+      </div>
+    </div>
+  </form>
+
+
+</section>
+
+
+
 {% block production %}
 
 <section class="section">
   <div class="container">
     <h1 class="title">
-      {{ board.name }}
+      {{ board.name }}: {{ total_quantity }} в работе
     </h1>
   </div>
 
@@ -14,8 +45,11 @@
 
         <div class="column">
         <h5 class="subtitle">Состояние шлейфа</h5>
-          {% for stage in board_scheme_list_cable %}
-          <label class="label">{{ stage.stage }}: 0</label>
+        {% for data in combined_data %}
+          {% if data.cable %}
+          <label class="label">{{ data.stage }}:
+            {{ data.quantity }}
+          </label>
           <div class="field has-addons">
             <div class="control">
               <input class="input" type="text" placeholder="100">
@@ -26,13 +60,17 @@
               </button>
             </div>
           </div>
-          {% endfor %}
+          {% endif %}
+        {% endfor %}
         </div>
 
         <div class="column">
-            <h5 class="subtitle">Состояние платы</h5>
-              {% for stage in board_scheme_list_board %}
-              <label class="label">{{ stage.stage }}: 0</label>
+          <h5 class="subtitle">Состояние платы</h5>
+          {% for data in combined_data %}
+            {% if not data.cable %}
+            <label class="label">{{ data.stage }}:
+              {{ data.quantity }}
+            </label>
               <div class="field has-addons">
                 <div class="control">
                   <input class="input" type="text" placeholder="100">
@@ -43,8 +81,9 @@
                   </button>
                 </div>
               </div>
-              {% endfor %}
-            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
         
       </div>
     </div>
@@ -52,4 +91,5 @@
 
 </section>
 
+{% endblock %}
 {% endblock %}
