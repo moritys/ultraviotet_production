@@ -1,4 +1,8 @@
 {% extends "production/production.html" %}
+{% load static %}
+{% block title %}
+  Производство плат: {{ board.name|lower }}
+{% endblock %}
 {% block content %}
 <section class="section">
 
