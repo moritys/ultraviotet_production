@@ -42,28 +42,33 @@
       {{ board.name }}: {{ total_quantity }} в работе
     </h1>
   </div>
-
-  <form class="box" method="post">
+<hr>
+  
+    
     <div class="field">
       <div class="columns">
-
         <div class="column">
         <h5 class="subtitle">Состояние шлейфа</h5>
         {% for data in combined_data %}
           {% if data.cable %}
+          <form class="box" method="post" action="{% url 'production:board_production' board.slug %}">
+            {% csrf_token %}
+          <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
+          <input type="hidden" name="hidden_board" value="{{ board.name }}">
           <label class="label">{{ data.stage }}:
             {{ data.quantity }}
           </label>
           <div class="field has-addons">
             <div class="control">
-              <input class="input" type="number" name="quantity" placeholder="100">
+              {{ form.quantity }}
             </div>
             <div class="control">
-              <button class="button is-success is-light">
+              <button class="button is-success is-light" type="submit">
                 Добавить
               </button>
             </div>
           </div>
+        </form>
           {% endif %}
         {% endfor %}
         </div>
@@ -71,27 +76,32 @@
         <div class="column">
           <h5 class="subtitle">Состояние платы</h5>
           {% for data in combined_data %}
-            {% if not data.cable %}
-            <label class="label">{{ data.stage }}:
-              {{ data.quantity }}
-            </label>
-              <div class="field has-addons">
-                <div class="control">
-                  <input class="input" type="number" name="quantity" placeholder="100">
-                </div>
-                <div class="control">
-                  <button class="button is-success is-light">
-                    Добавить
-                  </button>
-                </div>
-              </div>
-            {% endif %}
-          {% endfor %}
+          {% if not data.cable %}
+          <form class="box" method="post" action="{% url 'production:board_production' board.slug %}">
+            {% csrf_token %}
+          <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
+          <input type="hidden" name="hidden_board" value="{{ board.name }}">
+          <label class="label">{{ data.stage }}:
+            {{ data.quantity }}
+          </label>
+          <div class="field has-addons">
+            <div class="control">
+              {{ form.quantity }}
+            </div>
+            <div class="control">
+              <button class="button is-success is-light" type="submit">
+                Добавить
+              </button>
+            </div>
+          </div>
+        </form>
+          {% endif %}
+        {% endfor %}
         </div>
         
       </div>
     </div>
-  </form>
+
 
 </section>
 

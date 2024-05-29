@@ -1,6 +1,9 @@
 from django.shortcuts import get_object_or_404, render
 
-from production.models import Board, Production, StageComponentBoardQuantity
+from production.models import (
+    Board, Production, Stage, StageComponentBoardQuantity
+)
+from production.forms import ProductionForm
 
 
 def production(request):
@@ -22,8 +25,10 @@ def production(request):
     return render(request, template_name, context)
 
 
-def board_production(request, slug):
-    template_name = 'production/board-base.html'
+def process_db_data(slug):
+    '''
+    Функция для получения данных из БД.
+    '''
     board = get_object_or_404(Board, slug=slug)
     board_list = Board.objects.values('slug', 'name')
     production_data = Production.objects.filter(board=board)
@@ -52,4 +57,45 @@ def board_production(request, slug):
         'combined_data': combined_data,
         'total_quantity': total_quantity,
     }
+    return context
+
+
+def board_production(request, slug):
+    template_name = 'production/board-base.html'
+
+    context = process_db_data(slug)
+
+    board = context['board']
+    stage = 'Сокращение зп'
+
+    if request.method == 'POST':
+        form = ProductionForm(request.POST)
+        if form.is_valid():
+            quantity = form.cleaned_data['quantity']
+
+            existing_production = Production.objects.filter(
+                board__name=form.cleaned_data['hidden_board'],
+                stage__name=form.cleaned_data['hidden_stage']
+            ).first()
+
+            if existing_production:
+                existing_production.quantity += quantity
+                existing_production.save()
+            else:
+                production = Production()
+                production.board = Board.objects.get(
+                    name=form.cleaned_data['hidden_board']
+                )
+                production.stage = Stage.objects.get(
+                    name=form.cleaned_data['hidden_stage']
+                )
+                production.quantity = quantity
+                production.save()
+    else:
+        form = ProductionForm(initial={
+            'hidden_board': board,
+            'hidden_stage': stage,
+        })
+    context['form'] = form
+
     return render(request, template_name, context)
