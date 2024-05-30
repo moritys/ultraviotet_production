@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, HttpResponseRedirect, render
+from django.urls import reverse
 
 from production.models import (
     Board, Production, Stage, StageComponentBoardQuantity
@@ -91,6 +92,7 @@ def board_production(request, slug):
                 )
                 production.quantity = quantity
                 production.save()
+        form = ProductionForm()
     else:
         form = ProductionForm(initial={
             'hidden_board': board,

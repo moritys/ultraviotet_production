@@ -51,7 +51,7 @@
         <h5 class="subtitle">Состояние шлейфа</h5>
         {% for data in combined_data %}
           {% if data.cable %}
-          <form class="box" method="post" action="{% url 'production:board_production' board.slug %}">
+          <form class="box" method="post" action="{% url 'production:board_production' slug %}">
             {% csrf_token %}
           <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
           <input type="hidden" name="hidden_board" value="{{ board.name }}">
@@ -59,9 +59,9 @@
             {{ data.quantity }}
           </label>
           <div class="field has-addons">
-            <div class="control">
+            <p class="control is-expanded">
               {{ form.quantity }}
-            </div>
+            </p>
             <div class="control">
               <button class="button is-success is-light" type="submit">
                 Добавить
@@ -77,7 +77,7 @@
           <h5 class="subtitle">Состояние платы</h5>
           {% for data in combined_data %}
           {% if not data.cable %}
-          <form class="box" method="post" action="{% url 'production:board_production' board.slug %}">
+          <form class="box" method="post" action="{% url 'production:board_production' slug %}">
             {% csrf_token %}
           <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
           <input type="hidden" name="hidden_board" value="{{ board.name }}">
@@ -85,9 +85,9 @@
             {{ data.quantity }}
           </label>
           <div class="field has-addons">
-            <div class="control">
+            <p class="control is-expanded">
               {{ form.quantity }}
-            </div>
+            </p>
             <div class="control">
               <button class="button is-success is-light" type="submit">
                 Добавить
