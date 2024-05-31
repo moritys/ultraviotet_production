@@ -1,10 +1,10 @@
-from django.shortcuts import get_object_or_404, HttpResponseRedirect, render
-from django.urls import reverse
+from django.shortcuts import get_object_or_404, render
 
 from production.models import (
     Board, Production, Stage, StageComponentBoardQuantity
 )
 from production.forms import ProductionForm
+from production.utils import decrease_previous_stage_quantity
 
 
 def production(request):
@@ -81,7 +81,6 @@ def board_production(request, slug):
 
             if existing_production:
                 existing_production.quantity += quantity
-                existing_production.save()
             else:
                 production = Production()
                 production.board = Board.objects.get(
@@ -92,6 +91,15 @@ def board_production(request, slug):
                 )
                 production.quantity = quantity
                 production.save()
+                existing_production = production
+
+            try:
+                existing_production.save()
+                decrease_previous_stage_quantity(
+                    existing_production, quantity
+                )
+            except Exception as ex:
+                print(f'❗️❗️❗️ Не могу изменить количество плат: {ex}')
         form = ProductionForm()
     else:
         form = ProductionForm(initial={

@@ -1,5 +1,22 @@
 from django import forms
 
+from production.models import Production
+
+
+class ProductionFormtest(forms.ModelForm):
+
+    class Meta:
+        model = Production
+        fields = ('quantity',)
+        widgets = {
+            'quantity': forms.NumberInput(
+                attrs={
+                    'class': 'input',
+                    'placeholder': '100',
+                }
+            )
+        }
+
 
 class ProductionForm(forms.Form):
     quantity = forms.IntegerField(
