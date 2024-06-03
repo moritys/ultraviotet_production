@@ -93,13 +93,11 @@ def board_production(request, slug):
                 production.save()
                 existing_production = production
 
-            try:
+            if decrease_previous_stage_quantity(
+                existing_production, quantity
+            ):
                 existing_production.save()
-                decrease_previous_stage_quantity(
-                    existing_production, quantity
-                )
-            except Exception as ex:
-                print(f'❗️❗️❗️ Не могу изменить количество плат: {ex}')
+
         form = ProductionForm()
     else:
         form = ProductionForm(initial={
