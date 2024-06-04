@@ -7,25 +7,6 @@ from production.forms import ProductionForm
 from production.utils import decrease_previous_stage_quantity
 
 
-def production(request):
-    template_name = 'production/production.html'
-    board_list = Board.objects.values('slug', 'name')
-    production_data = Production.objects.select_related(
-        'board'
-    ).values('board__slug', 'quantity')
-
-    for board in board_list:
-        production_quantity = sum(
-            data['quantity'] for data in production_data if (
-                data['board__slug'] == board['slug'])
-        )
-        board['total_production_quantity'] = production_quantity
-    context = {
-        'board_list': board_list,
-    }
-    return render(request, template_name, context)
-
-
 def process_db_data(slug):
     '''
     Функция для получения данных из БД.
@@ -61,13 +42,10 @@ def process_db_data(slug):
     return context
 
 
-def board_production(request, slug):
-    template_name = 'production/board-base.html'
-
-    context = process_db_data(slug)
-
-    board = context['board']
-    stage = 'Сокращение зп'
+def process_production_form(request, board, stage):
+    '''
+    Функция для обработки формы.
+    '''
 
     if request.method == 'POST':
         form = ProductionForm(request.POST)
@@ -81,6 +59,10 @@ def board_production(request, slug):
 
             if existing_production:
                 existing_production.quantity += quantity
+                if decrease_previous_stage_quantity(
+                    existing_production, quantity
+                ):
+                    existing_production.save()
             else:
                 production = Production()
                 production.board = Board.objects.get(
@@ -90,13 +72,10 @@ def board_production(request, slug):
                     name=form.cleaned_data['hidden_stage']
                 )
                 production.quantity = quantity
-                production.save()
-                existing_production = production
-
-            if decrease_previous_stage_quantity(
-                existing_production, quantity
-            ):
-                existing_production.save()
+                if decrease_previous_stage_quantity(
+                    production, quantity
+                ):
+                    production.save()
 
         form = ProductionForm()
     else:
@@ -104,6 +83,41 @@ def board_production(request, slug):
             'hidden_board': board,
             'hidden_stage': stage,
         })
+    return form
+
+
+def production(request):
+    template_name = 'production/production.html'
+    board_list = Board.objects.values('slug', 'name')
+    production_data = Production.objects.select_related(
+        'board'
+    ).values('board__slug', 'quantity')
+
+    for board in board_list:
+        production_quantity = sum(
+            data['quantity'] for data in production_data if (
+                data['board__slug'] == board['slug'])
+        )
+        board['total_production_quantity'] = production_quantity
+    context = {
+        'board_list': board_list,
+    }
+
+    board = 'Круглая'
+    stage = 'Сокращение зп'
+    form = process_production_form(request, board, stage)
+    context['form'] = form
+    return render(request, template_name, context)
+
+
+def board_production(request, slug):
+    template_name = 'production/board-base.html'
+
+    context = process_db_data(slug)
+
+    board = context['board']
+    stage = 'Сокращение зп'
+    form = process_production_form(request, board, stage)
     context['form'] = form
 
     return render(request, template_name, context)

@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from production.models import (
-    Board, Stage, Production, StageComponentBoardQuantity
+    Stage, Production, StageComponentBoardQuantity
 )
 from catalog.models import Component
 
@@ -15,16 +15,10 @@ def decrease_component_quantity(current_production, current_quantity):
     for scheme in schemes:
         if scheme.component:
             component = get_object_or_404(Component, name=scheme.component)
-            try:
-                component.quantity -= scheme.quantity * current_quantity
-                component.save()
-            except Exception as ex:
-                print(
-                    'Не удалось сократить количество компонента, '
-                    'возможно его не осталось на складе, '
-                    'или он не заведен в систему \n'
-                    f'{ex}'
-                )
+            component.quantity -= scheme.quantity * current_quantity
+            component.save()
+            if component.quantity < 0:
+                print('Количество компонента меньше 0, кто то накосячил')
 
 
 def decrease_previous_stage_quantity(current_production, current_quantity):
@@ -43,8 +37,7 @@ def decrease_previous_stage_quantity(current_production, current_quantity):
                 return True
             except Exception as ex:
                 print(
-                    'Не удалось переместить платы в текущий статус, \n'
-                    'возможно в предыдущем статусе пусто'
+                    'В предыдущем статусе нет плат: '
                     f'{ex}'
                 )
                 return False

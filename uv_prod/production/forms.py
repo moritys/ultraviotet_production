@@ -1,4 +1,3 @@
-from typing import Any
 from django import forms
 
 from production.models import Production, Stage
@@ -42,7 +41,6 @@ class ProductionForm(forms.Form):
         cleaned_data = super().clean()
         hidden_stage = cleaned_data.get('hidden_stage')
         current_stage = Stage.objects.get(name=hidden_stage).order
-        print(current_stage)
 
         if hidden_stage:
             previous_stage = Stage.objects.filter(

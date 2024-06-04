@@ -13,7 +13,7 @@ class Component(models.Model):
         verbose_name='Описание',
         help_text='Не обязательное поле, описание'
     )
-    quantity = models.PositiveIntegerField(
+    quantity = models.IntegerField(
         verbose_name='Количество на складе'
     )
     critical_quantity = models.PositiveIntegerField(
