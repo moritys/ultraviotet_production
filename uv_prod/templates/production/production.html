@@ -14,7 +14,7 @@
 
         {% for board in board_list %}
         <div class="column">
-          <form class="box" method="post" action="{% url 'production:production' %}">
+          <form class="box" method="post">
             {% csrf_token %}
           <input type="hidden" name="hidden_stage" value="Новый заказ">
           <input type="hidden" name="hidden_board" value="{{ board.name }}">
@@ -47,9 +47,39 @@
 
 <div class="container">
   {% block production %}
+  <div id="production-data">
+    <!-- Здесь будут отображаться данные о производстве плат -->
+  </div>
   {% endblock %}
 </div>
 
 </section>
 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    function updateProductionData() {
+      $.ajax({
+        url: "{% url 'production:production_data' %}",
+        type: 'GET',
+        success: function(data) {
+          $('#production-data').empty();
+          
+          $.each(data.production_data, function(index, item) {
+            var productionInfo = '<p>Board: ' + item.board + ', Stage: ' + item.stage + ', Quantity: ' + item.quantity + '</p>';
+            $('#production-data').append(productionInfo);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    }
+
+    updateProductionData();
+    setInterval(updateProductionData, 5000);
+});
+
+</script>
 {% endblock %}

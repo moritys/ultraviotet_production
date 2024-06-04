@@ -34,10 +34,10 @@ def decrease_previous_stage_quantity(current_production, current_quantity):
             try:
                 previous_production.quantity -= current_quantity
                 previous_production.save()
-                return True
             except Exception as ex:
                 print(
                     'В предыдущем статусе нет плат: '
                     f'{ex}'
                 )
                 return False
+    return True

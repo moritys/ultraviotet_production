@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.http import JsonResponse
 
 from production.models import (
     Board, Production, Stage, StageComponentBoardQuantity
@@ -121,3 +122,17 @@ def board_production(request, slug):
     context['form'] = form
 
     return render(request, template_name, context)
+
+
+def production_data(request):
+    production_data = Production.objects.all()
+
+    data = {
+        'production_data': [{
+            'board': production.board.name,
+            'stage': production.stage.name,
+            'quantity': production.quantity,
+        } for production in production_data]
+    }
+
+    return JsonResponse(data)

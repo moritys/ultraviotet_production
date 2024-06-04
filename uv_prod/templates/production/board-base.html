@@ -33,6 +33,10 @@
 </section>
 
 
+<div id="production-data">
+  <!-- Здесь будут отображаться данные о производстве плат -->
+</div>
+
 
 {% block production %}
 
@@ -51,7 +55,7 @@
         <h5 class="subtitle">Состояние шлейфа</h5>
         {% for data in combined_data %}
           {% if data.cable %}
-          <form class="box" method="post" action="{% url 'production:board_production' slug %}">
+          <form class="box" method="post">
             {% csrf_token %}
           <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
           <input type="hidden" name="hidden_board" value="{{ board.name }}">
@@ -78,7 +82,7 @@
           <h5 class="subtitle">Состояние платы</h5>
           {% for data in combined_data %}
           {% if not data.cable %}
-          <form class="box" method="post" action="{% url 'production:board_production' slug %}">
+          <form class="box" method="post">
             {% csrf_token %}
           <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
           <input type="hidden" name="hidden_board" value="{{ board.name }}">
@@ -105,6 +109,35 @@
   </div>
 
 </section>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    function updateProductionData() {
+      $.ajax({
+        url: '/production/production-data/',
+        type: 'GET',
+        success: function(data) {
+          $('#production-data').empty();
+          
+          $.each(data.production_data, function(index, item) {
+            var productionInfo = '<p>Board: ' + item.board + ', Stage: ' + item.stage + ', Quantity: ' + item.quantity + '</p>';
+            $('#production-data').append(productionInfo);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    }
+
+    updateProductionData();
+    setInterval(updateProductionData, 5000);
+});
+
+</script>
 
 {% endblock %}
 {% endblock %}
