@@ -11,18 +11,6 @@
       Это страница со списком покупок
     </h1>
 
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit">
-  </form>
-
-  {% with data=request.POST %}
-    {% if form.is_valid %}
-      <h2>✅</h2>
-    {% endif %}
-  {% endwith %}
-
   </div>
 </section>
 {% endblock %}

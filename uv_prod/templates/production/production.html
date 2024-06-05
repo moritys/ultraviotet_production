@@ -61,7 +61,7 @@
   $(document).ready(function() {
     function updateProductionData() {
       $.ajax({
-        url: "{% url 'production:production_data' %}",
+        url: '{% url "production:production_data" %}',
         type: 'GET',
         success: function(data) {
           $('#production-data').empty();

@@ -31,19 +31,58 @@
           <th>Критическое количество</th>
         </tr>
       </tfoot>
-      <tbody>
-        {% for component in component_list %}
-            <tr {% if component.quantity <= component.critical_quantity %} class="is-danger" {% endif %}>
-              <th><abbr title="{{ component.description }}">{{ component.name }}</abbr></th>
-              <td>{{ component.quantity }}</td>
-              <td>{{ component.critical_quantity }}</td>
-            </tr>
-        {% endfor %}
+      <tbody id="catalog-data">
+            
       </tbody>
     </table>
   </div>
 </div>
-  </div>
+</div>
 </section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+   $(document).ready(function() {
+     function updateCatalogData() {
+       $.ajax({
+         url: '{% url "catalog:catalog_data" %}',
+         type: 'GET',
+         success: function(data) {
+           $('#catalog-data').empty();
+           
+           $.each(data.catalog_data, function(index, item) {
+             var catalogInfo;
+             if (item.quantity <= item.critical_quantity) {
+              catalogInfo = (
+                '<tr class="is-danger">' + 
+                  '<th><abbr title="' + item.description + '">'
+                    + item.name + '</abbr></th>' + 
+                  '<td>' + item.quantity + '</td>' + 
+                  '<td>' + item.critical_quantity + '</td>' + 
+                '</tr>'
+               );
+             } else {
+              catalogInfo = (
+                '<tr>' + 
+                  '<th><abbr title="' + item.description + '">'
+                    + item.name + '</abbr></th>' + 
+                  '<td>' + item.quantity + '</td>' + 
+                  '<td>' + item.critical_quantity + '</td>' + 
+                '</tr>'
+               );
+             }
+             $('#catalog-data').append(catalogInfo);
+           });
+         },
+         error: function(xhr, status, error) {
+           console.error(error);
+         }
+       });
+     }
+   
+     updateCatalogData();
+     setInterval(updateCatalogData, 1000);
+   });
+   
+</script>
 {% endblock %}
  

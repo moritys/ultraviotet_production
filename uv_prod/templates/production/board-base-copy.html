@@ -26,8 +26,11 @@
       </form>
    </div>
 </section>
+<div id="production-data">
 
+   <!-- Здесь будут отображаться данные о производстве плат -->
 
+</div>
 {% block production %}
 <section class="section">
    <div class="container">
@@ -36,22 +39,35 @@
       </h1>
    </div>
    <hr>
-   <div>
-
-    <!-- Здесь будут отображаться данные о производстве плат -->
- 
-   </div>
    <div class="container">
       <div class="field">
          <div class="columns">
             <div class="column">
                <h5 class="subtitle">Состояние шлейфа</h5>
-               <div id="production-data-cabel">
-                <!-- Здесь будут отображаться данные о производстве плат -->
-               </div>
-
+               {% for data in combined_data %}
+               {% if data.cable %}
+               <form class="box" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
+                  <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                  <label class="label">{{ data.stage }}:
+                  {{ data.quantity }}
+                  </label>
+                  <div class="field has-addons">
+                     <p class="control is-expanded">
+                        {{ form.quantity }}
+                     </p>
+                     <div class="control">
+                        <button class="button is-success is-light" type="submit">
+                        Добавить
+                        </button>
+                     </div>
+                  </div>
+               </form>
+               {% endif %}
+               {% endfor %}
             </div>
-            <div class="column" id="production-data-not-cabel">
+            <div class="column">
                <h5 class="subtitle">Состояние платы</h5>
                {% for data in combined_data %}
                {% if not data.cable %}
@@ -88,15 +104,16 @@
          url: '{% url "production:production_data" %}',
          type: 'GET',
          success: function(data) {
-           $('#production-data-cabel').empty();
+           $('#production-data').empty();
            
-           $.each(data.production_data_cabel, function(index, item) {
+           $.each(data.production_data_not_cabel, function(index, item) {
              var productionInfo = (
-              '<label class="label">' + item.stage + ': '
-                + item.quantity +
-                '</label>'
+               '<label class="label">' + item.board +
+               ': ' + item.stage +
+               ': ' + item.quantity +
+               '</label>'
              );
-             $('#production-data-cabel').append(productionInfo);
+             $('#production-data').append(productionInfo);
            });
          },
          error: function(xhr, status, error) {

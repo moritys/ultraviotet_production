@@ -112,7 +112,7 @@ def production(request):
 
 
 def board_production(request, slug):
-    template_name = 'production/board-base.html'
+    template_name = 'production/board-base-copy.html'
 
     context = process_db_data(slug)
 
@@ -125,14 +125,22 @@ def board_production(request, slug):
 
 
 def production_data(request):
-    production_data = Production.objects.all()
+    production_data_cabel = Production.objects.filter(stage__cable_stage=True)
+    production_data_not_cabel = Production.objects.filter(
+        stage__cable_stage=False
+    )
 
     data = {
-        'production_data': [{
+        'production_data_cabel': [{
             'board': production.board.name,
             'stage': production.stage.name,
             'quantity': production.quantity,
-        } for production in production_data]
+        } for production in production_data_cabel],
+        'production_data_not_cabel': [{
+            'board': production.board.name,
+            'stage': production.stage.name,
+            'quantity': production.quantity,
+        } for production in production_data_not_cabel]
     }
 
     return JsonResponse(data)
