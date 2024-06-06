@@ -6,6 +6,10 @@ app_name = 'production'
 
 urlpatterns = [
     path('', views.production, name='production'),
-    path('production-data/', views.production_data, name='production_data'),
+    path(
+        '<slug:slug>/update_quantity/',
+        views.update_quantity,
+        name='update_quantity'
+    ),
     path('<slug:slug>/', views.board_production, name='board_production'),
 ]

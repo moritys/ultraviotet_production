@@ -31,24 +31,39 @@
 {% block production %}
 <section class="section">
    <div class="container">
-      <h1 class="title">
+      <h1 id="production_count" class="title">
          {{ board.name }}: {{ total_quantity }} в работе
       </h1>
    </div>
    <hr>
-   <div>
 
-    <!-- Здесь будут отображаться данные о производстве плат -->
- 
-   </div>
    <div class="container">
       <div class="field">
          <div class="columns">
             <div class="column">
                <h5 class="subtitle">Состояние шлейфа</h5>
-               <div id="production-data-cabel">
-                <!-- Здесь будут отображаться данные о производстве плат -->
-               </div>
+               {% for data in combined_data %}
+               {% if data.cable %}
+               <form class="box" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
+                  <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                  <label id="quantity_cabel_{{ data.production_id }}" class="label">{{ data.stage }}:
+                  {{ data.quantity }}
+                  </label>
+                  <div class="field has-addons">
+                     <p class="control is-expanded">
+                        {{ form.quantity }}
+                     </p>
+                     <div class="control">
+                        <button class="button is-success is-light" type="submit">
+                        Добавить
+                        </button>
+                     </div>
+                  </div>
+               </form>
+               {% endif %}
+               {% endfor %}
 
             </div>
             <div class="column" id="production-data-not-cabel">
@@ -59,7 +74,7 @@
                   {% csrf_token %}
                   <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
                   <input type="hidden" name="hidden_board" value="{{ board.name }}">
-                  <label class="label">{{ data.stage }}:
+                  <label id="quantity_not_cabel_{{ data.production_id }}" class="label">{{ data.stage }}:
                   {{ data.quantity }}
                   </label>
                   <div class="field has-addons">
@@ -83,31 +98,33 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
    $(document).ready(function() {
-     function updateProductionData() {
-       $.ajax({
-         url: '{% url "production:production_data" %}',
-         type: 'GET',
-         success: function(data) {
-           $('#production-data-cabel').empty();
-           
-           $.each(data.production_data_cabel, function(index, item) {
-             var productionInfo = (
-              '<label class="label">' + item.stage + ': '
-                + item.quantity +
-                '</label>'
-             );
-             $('#production-data-cabel').append(productionInfo);
-           });
-         },
-         error: function(xhr, status, error) {
-           console.error(error);
-         }
-       });
-     }
-   
-     updateProductionData();
-     setInterval(updateProductionData, 5000);
-   });
+      function updateQuantities() {
+        $('.box').each(function() {
+          var form = $(this);
+          
+          $.ajax({
+            type: 'GET',
+            url: '{% url "production:update_quantity" board.slug %}',
+            success: function(response) {
+               response.production_data_cabel.forEach(function(production) {
+                  $('#quantity_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
+                });
+                
+                response.production_data_not_cabel.forEach(function(production) {
+                  $('#quantity_not_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
+                });
+
+                $('#production_count').text(response.production_count.name + ': ' + response.production_count.total_quantity + ' в работе');
+            },
+            error: function(error) {
+              console.log(error);
+            }
+          });
+        });
+      }
+
+      setInterval(updateQuantities, 1000);
+    });
    
 </script>
 {% endblock %}
