@@ -90,7 +90,7 @@ def process_production_form(request, board, stage):
 
 def production(request):
     template_name = 'production/production.html'
-    board_list = Board.objects.values('slug', 'name')
+    board_list = Board.objects.values('id', 'slug', 'name')
     production_data = Production.objects.select_related(
         'board'
     ).values('board__slug', 'quantity')
@@ -153,4 +153,27 @@ def update_quantity(request, slug):
             'total_quantity': board_total_quantity
         }
     }
+    return JsonResponse(data)
+
+
+def board_data(request):
+    board_list = Board.objects.values('id', 'slug', 'name')
+    production_data = Production.objects.select_related(
+        'board'
+    ).values('board__slug', 'quantity')
+
+    for board in board_list:
+        production_quantity = sum(
+            data['quantity'] for data in production_data if (
+                data['board__slug'] == board['slug'])
+        )
+        board['total_production_quantity'] = production_quantity
+    data = {
+        'board_data': [{
+            'id': board['id'],
+            'board': board['name'],
+            'total_production_quantity': board['total_production_quantity'],
+        } for board in board_list],
+    }
+
     return JsonResponse(data)

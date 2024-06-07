@@ -18,8 +18,9 @@
             {% csrf_token %}
           <input type="hidden" name="hidden_stage" value="Новый заказ">
           <input type="hidden" name="hidden_board" value="{{ board.name }}">
-          <label class="label">{{ board.name }}: 
-            {{ board.total_production_quantity }}</label>
+          <label id="board_data_{{ board.id }}" class="label">{{ board.name }}:
+            {{ board.total_production_quantity }}
+          </label>
           <div class="field has-addons">
             <p class="control is-expanded">
               {{ form.quantity }}
@@ -47,12 +48,37 @@
 
 <div class="container">
   {% block production %}
-  <div id="production-data">
-    <!-- Здесь будут отображаться данные о производстве плат -->
-  </div>
+
   {% endblock %}
 </div>
 
 </section>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+   $(document).ready(function() {
+      function updateBoardData() {
+        $('.box').each(function() {
+          var form = $(this);
+          
+          $.ajax({
+            type: 'GET',
+            url: '{% url "production:board_data" %}',
+            success: function(response) {
+               response.board_data.forEach(function(board) {
+                  $('#board_data_' + board.id).text(board.board + ': ' + board.total_production_quantity);
+                });
+            
+            },
+            error: function(error) {
+              console.log(error);
+            }
+          });
+        });
+      }
+
+      setInterval(updateBoardData, 1000);
+    });
+   
+</script>
 {% endblock %}

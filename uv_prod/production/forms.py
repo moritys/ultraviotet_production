@@ -1,5 +1,7 @@
 from django import forms
 
+from django.core.exceptions import ValidationError
+
 from production.models import Production, Stage
 
 
@@ -38,17 +40,20 @@ class ProductionForm(forms.Form):
         Проверка максимального количества.
         Работает только если в бд заведены записи производства.
         '''
-        cleaned_data = super().clean()
-        hidden_stage = cleaned_data.get('hidden_stage')
-        current_stage = Stage.objects.get(name=hidden_stage).order
+        hidden_stage = self.cleaned_data['hidden_stage']
+        hidden_stage_order = Stage.objects.get(name=hidden_stage).order
+
+        quantity = self.cleaned_data['quantity']
 
         if hidden_stage:
             previous_stage = Stage.objects.filter(
-                order__lt=current_stage
+                order__lt=hidden_stage_order
             ).first()
 
             if previous_stage:
                 max_quantity = previous_stage.production_set.first().quantity
-                self.fields['quantity'].widget.attrs['max'] = max_quantity
-
-        return cleaned_data
+                if quantity > max_quantity:
+                    raise ValidationError(
+                        'Значение не должно быть больше, '
+                        f'чем в предыдущем статусе ({max_quantity})'
+                    )
