@@ -4,6 +4,11 @@ from catalog.models import Component
 
 
 class Board(models.Model):
+    '''
+    Модель платы.
+    - name: название платы (круглая, центральная, ...);
+    - slug: уникальный слаг платы для создания url (round, central, ...);
+    '''
     name = models.CharField(
         max_length=30,
         verbose_name='Название',
@@ -24,6 +29,14 @@ class Board(models.Model):
 
 
 class Stage(models.Model):
+    '''
+    Модель этапа производства.
+    - name: название этапа;
+    - order: порядок этапа (чем меньше цифра, тем выше он в списке),
+    !важный параметр, в зависимости от него плата переплывает
+    !из предыдущего этапа;
+    - cable_stage: является ли этап работой со шлейфами;
+    '''
     name = models.CharField(
         max_length=256,
         verbose_name='Название',
@@ -45,6 +58,15 @@ class Stage(models.Model):
 
 
 class Production(models.Model):
+    '''
+    Модель производства.
+    Учитывает количество плат в каждом этапе производства.
+    Отображается на странице производства.
+    Её меняет юзер и через неё списываются компоненты.
+    - board: плата;
+    - stage: текущий этап данной платы;
+    - quantity: количество плат в данном этапе;
+    '''
     board = models.ForeignKey(
         Board,
         on_delete=models.CASCADE,
@@ -69,6 +91,17 @@ class Production(models.Model):
 
 
 class StageComponentBoardQuantity(models.Model):
+    '''
+    Модель схемы производства.
+    Содержит данные об использовании компонентов:
+    отдельно для каждой платы, каждого этапа и компонента.
+    На каждый этап может использоваться несколько компонентов,
+    но связь плата + этап должна быть уникальной.
+    - board: плата;
+    - stage: этап;
+    - component: компонент (может не быть);
+    - quantity: количество компонента на этап (если компонента нет, то 0);
+    '''
     board = models.ForeignKey(
         Board,
         on_delete=models.CASCADE,

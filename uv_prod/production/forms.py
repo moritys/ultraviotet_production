@@ -2,22 +2,7 @@ from django import forms
 
 from django.core.exceptions import ValidationError
 
-from production.models import Production, Stage
-
-
-class ProductionFormtest(forms.ModelForm):
-
-    class Meta:
-        model = Production
-        fields = ('quantity',)
-        widgets = {
-            'quantity': forms.NumberInput(
-                attrs={
-                    'class': 'input',
-                    'placeholder': '100',
-                }
-            )
-        }
+from production.models import Stage
 
 
 class ProductionForm(forms.Form):
@@ -40,6 +25,7 @@ class ProductionForm(forms.Form):
         Проверка максимального количества.
         Работает только если в бд заведены записи производства.
         '''
+        super().clean()
         hidden_stage = self.cleaned_data['hidden_stage']
         hidden_stage_order = Stage.objects.get(name=hidden_stage).order
 

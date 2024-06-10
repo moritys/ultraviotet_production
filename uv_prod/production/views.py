@@ -48,7 +48,6 @@ def process_production_form(request, board, stage):
     '''
     Функция для обработки формы.
     '''
-
     if request.method == 'POST':
         form = ProductionForm(request.POST)
         if form.is_valid():
@@ -88,19 +87,26 @@ def process_production_form(request, board, stage):
     return form
 
 
-def production(request):
-    template_name = 'production/production.html'
-    board_list = Board.objects.values('id', 'slug', 'name')
-    production_data = Production.objects.select_related(
-        'board'
-    ).values('board__slug', 'quantity')
-
+def get_production_quantity(board_list, production_data):
+    '''Функция для подсчета количества плат на производстве.'''
     for board in board_list:
         production_quantity = sum(
             data['quantity'] for data in production_data if (
                 data['board__slug'] == board['slug'])
         )
         board['total_production_quantity'] = production_quantity
+    return board_list
+
+
+def production(request):
+    '''Функция общей страницы производства.'''
+    template_name = 'production/production.html'
+    board_list = Board.objects.values('id', 'slug', 'name')
+    production_data = Production.objects.select_related(
+        'board'
+    ).values('board__slug', 'quantity')
+
+    get_production_quantity(board_list, production_data)
     context = {
         'board_list': board_list,
     }
@@ -113,6 +119,7 @@ def production(request):
 
 
 def board_production(request, slug):
+    '''Функция конкретной страницы производства.'''
     template_name = 'production/board-base.html'
 
     context = process_db_data(slug)
@@ -126,14 +133,19 @@ def board_production(request, slug):
 
 
 def update_quantity(request, slug):
+    '''
+    Функция для обновления данных по количеству
+    на странице конкретной платы через ajax.
+    '''
     production_data_cabel = Production.objects.filter(
         stage__cable_stage=True, board__slug=slug
     )
     production_data_not_cabel = Production.objects.filter(
         stage__cable_stage=False, board__slug=slug
     )
-    board_name = process_db_data(slug)['board'].name
-    board_total_quantity = process_db_data(slug)['total_quantity']
+    db_data = process_db_data(slug)
+    board_name = db_data['board'].name
+    board_total_quantity = db_data['total_quantity']
 
     data = {
         'production_data_cabel': [{
@@ -157,17 +169,16 @@ def update_quantity(request, slug):
 
 
 def board_data(request):
+    '''
+    Функция для обновления данных по количеству
+    на общей странице производства через ajax.
+    '''
     board_list = Board.objects.values('id', 'slug', 'name')
     production_data = Production.objects.select_related(
         'board'
     ).values('board__slug', 'quantity')
 
-    for board in board_list:
-        production_quantity = sum(
-            data['quantity'] for data in production_data if (
-                data['board__slug'] == board['slug'])
-        )
-        board['total_production_quantity'] = production_quantity
+    get_production_quantity(board_list, production_data)
     data = {
         'board_data': [{
             'id': board['id'],
