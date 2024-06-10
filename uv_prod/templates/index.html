@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}
+  Главная
+{% endblock %}
 {% block content %}
 <section class="section">
   <div class="container">
@@ -10,45 +14,38 @@
 
 <section class="section">
   <div class="container">
-    <h2 class="subtitle">Что заказать</h2>
+    <h2 class="subtitle">Осталось мало</h2>
     <div class="columns">
       <div class="column is-two-thirds">
-    <table class="table is-striped is-hoverable is-fullwidth">
-      <thead>
-        <tr>
-          <th>Наименование</th>
-          <th>Количество на складе</th>
-          <th>Критическое количество</th>
-        </tr>
-      </thead>
-      <tfoot>
-        <tr>
-          <th>Наименование</th>
-          <th>Количество на складе</th>
-          <th>Критическое количество</th>
-        </tr>
-      </tfoot>
-      <tbody>
-        {% for component in component_list %}
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
             <tr>
-              <th><abbr title="{{ component.description }}">{{ component.name }}</abbr></th>
-              <td>{{ component.quantity }}</td>
-              <td>{{ component.critical_quantity }}</td>
+              <th>Наименование</th>
+              <th>Количество на складе</th>
+              <th>Критическое количество</th>
             </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>Наименование</th>
+              <th>Количество на складе</th>
+              <th>Критическое количество</th>
+            </tr>
+          </tfoot>
+          <tbody>
+            {% for component in component_list %}
+              <tr>
+                <th><abbr title="{{ component.description }}">{{ component.name }}</abbr></th>
+                <td>{{ component.quantity }}</td>
+                <td>{{ component.critical_quantity }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <h2 class="subtitle">Сейчас в производстве</h2>
-      Список плат
-    </h2>
-  </div>
-</section>
 {% endblock %}
  

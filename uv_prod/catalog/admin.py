@@ -18,4 +18,4 @@ class ComponentAdmin(admin.ModelAdmin):
     list_display_links = ('name',)
 
 
-admin.site.register(Component)
+admin.site.register(Component, ComponentAdmin)

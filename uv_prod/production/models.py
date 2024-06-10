@@ -4,10 +4,20 @@ from catalog.models import Component
 
 
 class Board(models.Model):
+    '''
+    Модель платы.
+    - name: название платы (круглая, центральная, ...);
+    - slug: уникальный слаг платы для создания url (round, central, ...);
+    '''
     name = models.CharField(
         max_length=30,
         verbose_name='Название',
         help_text='Уникальное название платы, не более 30 символов'
+    )
+    slug = models.SlugField(
+        max_length=30,
+        verbose_name='Слаг',
+        help_text='Уникальный слаг платы, не более 30 символов'
     )
 
     def __str__(self):
@@ -19,21 +29,44 @@ class Board(models.Model):
 
 
 class Stage(models.Model):
+    '''
+    Модель этапа производства.
+    - name: название этапа;
+    - order: порядок этапа (чем меньше цифра, тем выше он в списке),
+    !важный параметр, в зависимости от него плата переплывает
+    !из предыдущего этапа;
+    - cable_stage: является ли этап работой со шлейфами;
+    '''
     name = models.CharField(
         max_length=256,
         verbose_name='Название',
         help_text='Уникальное название этапа, не более 256 символов'
     )
+    order = models.PositiveSmallIntegerField(
+        verbose_name='Порядок этапа',
+        help_text='Порядок выполнения этапов, от 1 до бесконечности'
+    )
+    cable_stage = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
     class Meta:
+        ordering = ('order',)
         verbose_name = 'Этап производства'
         verbose_name_plural = 'Этапы производства'
 
 
 class Production(models.Model):
+    '''
+    Модель производства.
+    Учитывает количество плат в каждом этапе производства.
+    Отображается на странице производства.
+    Её меняет юзер и через неё списываются компоненты.
+    - board: плата;
+    - stage: текущий этап данной платы;
+    - quantity: количество плат в данном этапе;
+    '''
     board = models.ForeignKey(
         Board,
         on_delete=models.CASCADE,
@@ -58,6 +91,22 @@ class Production(models.Model):
 
 
 class StageComponentBoardQuantity(models.Model):
+    '''
+    Модель схемы производства.
+    Содержит данные об использовании компонентов:
+    отдельно для каждой платы, каждого этапа и компонента.
+    На каждый этап может использоваться несколько компонентов,
+    но связь плата + этап должна быть уникальной.
+    - board: плата;
+    - stage: этап;
+    - component: компонент (может не быть);
+    - quantity: количество компонента на этап (если компонента нет, то 0);
+    '''
+    board = models.ForeignKey(
+        Board,
+        on_delete=models.CASCADE,
+        verbose_name='Плата'
+    )
     stage = models.ForeignKey(
         Stage,
         on_delete=models.CASCADE,
@@ -68,11 +117,6 @@ class StageComponentBoardQuantity(models.Model):
         blank=True, null=True,
         on_delete=models.CASCADE,
         verbose_name='Компонент'
-    )
-    board = models.ForeignKey(
-        Board,
-        on_delete=models.CASCADE,
-        verbose_name='Плата'
     )
     quantity = models.PositiveIntegerField(
         verbose_name='Количество компонента на этап'

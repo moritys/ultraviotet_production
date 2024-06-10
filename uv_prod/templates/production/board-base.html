@@ -1,0 +1,135 @@
+{% extends "production/production.html" %}
+{% load static %}
+{% block title %}
+Производство плат: {{ board.name|lower }}
+{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <form class="box">
+      <div class="field">
+        <h5 class="subtitle">Платы в производстве</h5>
+        <div class="columns">
+          {% for board in board_list %}
+            <div class="column">
+              <label class="label">{{ board.name }}</label>
+              <div class="field has-addons">
+              </div>
+              <a class="button is-success is-light is-fullwidth" 
+              href="{% url 'production:board_production' board.slug %}" 
+                {% if slug == board.slug %} title="Куда перейти? Ты уже тут" 
+                disabled
+                {% endif %}>
+                Перейти
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% block production %}
+<section class="section">
+  <div class="container">
+    <h1 id="production_count" class="title">
+      {{ board.name }}: {{ total_quantity }} в работе
+    </h1>
+  </div>
+  <hr>
+
+  <div class="container">
+    <div class="field">
+      <div class="columns">
+        <div class="column">
+          <h5 class="subtitle">Состояние шлейфа</h5>
+          {% for data in combined_data %}
+            {% if data.cable %}
+              <form class="box" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
+                <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                <label id="quantity_cabel_{{ data.production_id }}" class="label">
+                  {{ data.stage }}: {{ data.quantity }}
+                </label>
+                <div class="field has-addons">
+                  <p class="control is-expanded">
+                    {{ form.quantity }}
+                  </p>
+                  <div class="control">
+                    <button class="button is-success is-light" type="submit">
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+              </form>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        <div class="column" id="production-data-not-cabel">
+          <h5 class="subtitle">Состояние платы</h5>
+          {% for data in combined_data %}
+            {% if not data.cable %}
+              <form class="box" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
+                <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                <label id="quantity_not_cabel_{{ data.production_id }}" class="label">
+                  {{ data.stage }}: {{ data.quantity }}
+                </label>
+                <div class="field has-addons">
+                  <p class="control is-expanded">
+                    {{ form.quantity }}
+                  </p>
+                  <div class="control">
+                    <button class="button is-success is-light" type="submit">
+                      Добавить
+                    </button>
+                  </div>
+                </div>
+              </form>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    function updateQuantities() {
+      $('.box').each(function() {
+        var form = $(this);
+          
+        $.ajax({
+          type: 'GET',
+          url: '{% url "production:update_quantity" board.slug %}',
+          success: function(response) {
+            response.production_data_cabel.forEach(function(production) {
+              $('#quantity_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
+            });
+                
+            response.production_data_not_cabel.forEach(function(production) {
+              $('#quantity_not_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
+            });
+
+            $('#production_count').text(response.production_count.name + ': ' + response.production_count.total_quantity + ' в работе');
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      });
+    }
+
+    setInterval(updateQuantities, 1000);
+  });
+</script>
+{% endblock %}
+{% endblock %}
