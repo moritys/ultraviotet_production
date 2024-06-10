@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block title %}
+  Список компонентов
+{% endblock %}
 {% block content %}
 <section class="section">
   <div class="container">
@@ -12,145 +16,72 @@
   <div class="container">
     <div class="columns">
       <div class="column is-two-thirds">
-    <table class="table is-striped is-hoverable is-fullwidth">
-      <thead>
-        <tr>
-          <th>Имя</th>
-          <th>Количество</th>
-        </tr>
-      </thead>
-      <tfoot>
-        <tr>
-          <th>Имя</th>
-          <th>Количество</th>
-        </tr>
-      </tfoot>
-      <tbody>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-        <tr>
-          <th>DDDDDDD</th>
-          <td>11</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-        <tr>
-          <th>DDDDDDD</th>
-          <td>11</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-        <tr>
-          <th>DDDDDDD</th>
-          <td>11</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-        <tr>
-          <th>DDDDDDD</th>
-          <td>11</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-        <tr>
-          <th>DDDDDDD</th>
-          <td>11</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-        <tr>
-          <th>DDDDDDD</th>
-          <td>11</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-        <tr>
-          <th>DDDDDDD</th>
-          <td>11</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DFHGJ32423GBFHDG</th>
-          <td>1234</td>
-        </tr>
-        <tr>
-          <th>DSF2545654645FDSGFG</th>
-          <td>4535</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Наименование</th>
+              <th>Количество на складе</th>
+              <th>Критическое количество</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>Наименование</th>
+              <th>Количество на складе</th>
+              <th>Критическое количество</th>
+            </tr>
+          </tfoot>
+          <tbody id="catalog-data">
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    function updateCatalogData() {
+      $.ajax({
+        url: '{% url "catalog:catalog_data" %}',
+        type: 'GET',
+        success: function(data) {
+          $('#catalog-data').empty();
+           
+          $.each(data.catalog_data, function(index, item) {
+            var catalogInfo;
+            if (item.quantity <= item.critical_quantity) {
+              catalogInfo = (
+                '<tr class="is-danger">' + 
+                  '<th><abbr title="' + item.description + '">'
+                    + item.name + '</abbr></th>' + 
+                  '<td>' + item.quantity + '</td>' + 
+                  '<td>' + item.critical_quantity + '</td>' + 
+                '</tr>'
+              );
+            } else {
+              catalogInfo = (
+                '<tr>' + 
+                  '<th><abbr title="' + item.description + '">'
+                    + item.name + '</abbr></th>' + 
+                  '<td>' + item.quantity + '</td>' + 
+                  '<td>' + item.critical_quantity + '</td>' + 
+                '</tr>'
+              );
+            }
+            $('#catalog-data').append(catalogInfo);
+          });
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    }
+
+    updateCatalogData();
+    setInterval(updateCatalogData, 5000);
+  });
+</script>
 {% endblock %}
  

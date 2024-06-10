@@ -12,26 +12,29 @@
   
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item {% if view_name  == 'homepage:index' %}is-active {% endif %}"
-          href="{% url 'homepage:index' %}">
+        <a class="navbar-item 
+        {% if view_name  == 'homepage:index' %}is-active {% endif %}" 
+        href="{% url 'homepage:index' %}">
           Главная
         </a>
   
-        <a class="navbar-item {% if view_name  == 'catalog:product_list' %}is-active{% endif %}"
-        href="{% url 'catalog:product_list' %}">
+        <a class="navbar-item 
+        {% if view_name  == 'catalog:catalog' %}is-active{% endif %}"
+        href="{% url 'catalog:catalog' %}">
           Компоненты на складе
         </a>
 
-        <a class="navbar-item {% if view_name  == 'production:production' %}is-active{% endif %}"
+        <a class="navbar-item 
+        {% if view_name  == 'production:production' %}is-active{% endif %}"
         href="{% url 'production:production' %}">
           Производство
         </a>
 
-        <a class="navbar-item {% if view_name  == 'shopping:shopping' %}is-active{% endif %}"
+        <a class="navbar-item 
+        {% if view_name  == 'shopping:shopping' %}is-active{% endif %}"
         href="{% url 'shopping:shopping' %}">
           Список покупок
         </a>
-        </div>
       </div>
   
       <div class="navbar-end">

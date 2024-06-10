@@ -8,12 +8,12 @@
       {% block title %}ヽ(•‿•)ノ{% endblock %}
     </title>
     <link rel="icon" href="{% static 'img/fav.png' %}" type="image">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/versions/bulma-no-dark-mode.min.css">
   </head>
   <body>
     {% include "includes/header.html" %}
     <main>
-      {% block content %}Контента пока нет :({% endblock %}
+      {% block content %}Контента пока нет :( {% endblock %}
     </main>
     {% comment %} {% include "includes/footer.html" %} {% endcomment %}
   </body>
