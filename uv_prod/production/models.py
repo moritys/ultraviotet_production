@@ -57,6 +57,30 @@ class Stage(models.Model):
         verbose_name_plural = 'Этапы производства'
 
 
+class Document(models.Model):
+    number = models.PositiveSmallIntegerField(
+        verbose_name='Номер приложения',
+        help_text='Номер приложения по докам'
+    )
+    board = models.ForeignKey(
+        Board,
+        on_delete=models.CASCADE,
+        verbose_name='Плата'
+    )
+    board_quantity = models.PositiveIntegerField(
+        verbose_name='Количество заказанных плат',
+        help_text='Сколько конкретно данных плат заказано'
+    )
+
+    def __str__(self) -> str:
+        return f'Приложение {self.number}'
+
+    class Meta:
+        ordering = ('number',)
+        verbose_name = 'Приложение'
+        verbose_name_plural = 'Приложения'
+
+
 class Production(models.Model):
     '''
     Модель производства.
@@ -80,6 +104,11 @@ class Production(models.Model):
     quantity = models.PositiveIntegerField(
         verbose_name='Количество на этапе',
         help_text='Количество заданных плат на этом этапе'
+    )
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.CASCADE,
+        verbose_name='Номер прилы'
     )
 
     def __str__(self):
