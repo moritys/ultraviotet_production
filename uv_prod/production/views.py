@@ -2,23 +2,26 @@ from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 
 from production.models import (
-    Board, Production, Stage, StageComponentBoardQuantity
+    Board, Document, Production, Stage, StageComponentBoardQuantity
 )
 from production.forms import ProductionForm
 from production.utils import decrease_previous_stage_quantity
 
 
-def process_db_data(slug):
+def process_db_data(slug, doc_number):
     '''
     Функция для получения данных из БД.
     '''
     board = get_object_or_404(Board, slug=slug)
+    document = get_object_or_404(Document, number=doc_number, board=board)
     board_list = Board.objects.values('slug', 'name')
-    production_data = Production.objects.filter(board=board)
+    production_data = Production.objects.filter(
+        board=board, document=document
+    )
 
     combined_data = []
     stage_components = StageComponentBoardQuantity.objects.filter(
-        board=board
+        board=board, document=document
     ).order_by('stage__order').select_related('stage')
 
     for stage in stage_components:
@@ -37,6 +40,7 @@ def process_db_data(slug):
     context = {
         'board_list': board_list,
         'slug': slug,
+        'document': document,
         'board': board,
         'combined_data': combined_data,
         'total_quantity': total_quantity,
@@ -103,12 +107,13 @@ def production(request):
     template_name = 'production/production.html'
     board_list = Board.objects.values('id', 'slug', 'name')
     production_data = Production.objects.select_related(
-        'board'
-    ).values('board__slug', 'quantity')
+        'board', 'document'
+    ).values('board__slug', 'quantity', 'document__number')
 
     get_production_quantity(board_list, production_data)
     context = {
         'board_list': board_list,
+        'production_list': production_data,
     }
 
     board = 'Круглая'
@@ -118,11 +123,11 @@ def production(request):
     return render(request, template_name, context)
 
 
-def board_production(request, slug):
+def board_production(request, slug, number):
     '''Функция конкретной страницы производства.'''
     template_name = 'production/board-base.html'
 
-    context = process_db_data(slug)
+    context = process_db_data(slug, number)
 
     board = context['board']
     stage = 'Сокращение зп'
@@ -132,7 +137,7 @@ def board_production(request, slug):
     return render(request, template_name, context)
 
 
-def update_quantity(request, slug):
+def update_quantity(request, slug, number):
     '''
     Функция для обновления данных по количеству
     на странице конкретной платы через ajax.
@@ -143,7 +148,7 @@ def update_quantity(request, slug):
     production_data_not_cabel = Production.objects.filter(
         stage__cable_stage=False, board__slug=slug
     )
-    db_data = process_db_data(slug)
+    db_data = process_db_data(slug, number)
     board_name = db_data['board'].name
     board_total_quantity = db_data['total_quantity']
 

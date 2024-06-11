@@ -19,6 +19,7 @@ class ProductionForm(forms.Form):
     )
     hidden_board = forms.CharField(widget=forms.HiddenInput)
     hidden_stage = forms.CharField(widget=forms.HiddenInput)
+    hidden_document = forms.CharField(widget=forms.HiddenInput)
 
     def clean(self):
         '''

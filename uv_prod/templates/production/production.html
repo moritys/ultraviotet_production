@@ -16,7 +16,7 @@
   <div class="container">
     <div class="box">
       <div class="field">
-        <h5 class="subtitle">Количество производимых плат</h5>
+        <h5 class="subtitle">Приложение <strong></strong></h5>
 
         <div class="columns">
 
@@ -41,7 +41,8 @@
                 </div>
               </form>
               <a class="button is-success is-light is-fullwidth" 
-              href="{% url 'production:board_production' board.slug %}" 
+              href=
+              "{% url 'production:board_production' board.slug doc_number %}" 
               {% if slug == board.slug %} title="Куда перейти? Ты уже тут" 
               disabled
               {% endif %}>

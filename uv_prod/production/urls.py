@@ -12,9 +12,13 @@ urlpatterns = [
         name='board_data'
     ),
     path(
-        '<slug:slug>/update_quantity/',
+        '<int:number>/<slug:slug>/update_quantity/',
         views.update_quantity,
         name='update_quantity'
     ),
-    path('<slug:slug>/', views.board_production, name='board_production'),
+    path(
+        '<int:number>/<slug:slug>/',
+        views.board_production,
+        name='board_production'
+    ),
 ]
