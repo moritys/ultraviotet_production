@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
+from django.db.models import Sum
 
 from production.models import (
     Board, Document, Production, Stage, StageComponentBoardQuantity
@@ -40,7 +41,6 @@ def process_db_data(slug, doc_number):
     context = {
         'board_list': board_list,
         'slug': slug,
-        'document': document,
         'board': board,
         'combined_data': combined_data,
         'total_quantity': total_quantity,
@@ -91,29 +91,41 @@ def process_production_form(request, board, stage):
     return form
 
 
-def get_production_quantity(board_list, production_data):
-    '''Функция для подсчета количества плат на производстве.'''
-    for board in board_list:
-        production_quantity = sum(
-            data['quantity'] for data in production_data if (
-                data['board__slug'] == board['slug'])
-        )
-        board['total_production_quantity'] = production_quantity
-    return board_list
+def get_production_quantity():
+    '''
+    Функция для подсчета количества каждой платы для каждого документа.
+    '''
+    sum_quantities = Production.objects.values('stage', 'document').annotate(
+        total_quantity=Sum('quantity')
+    )
+    for result in sum_quantities:
+        stage_name = Stage.objects.get(pk=result['stage']).name
+        document_number = Document.objects.get(pk=result['document']).number
+        total_quantity = result['total_quantity']
+        print(f"Для этапа '{stage_name}' и номера документа '{document_number}' суммарное количество плат: {total_quantity}")
 
 
 def production(request):
     '''Функция общей страницы производства.'''
     template_name = 'production/production.html'
     board_list = Board.objects.values('id', 'slug', 'name')
+    documents = Document.objects.values('number').distinct()
+    document_boards = {}
+    for document in documents:
+        document_boards[document['number']] = Document.objects.filter(
+            number=document['number']
+        )
+    print(document_boards)
     production_data = Production.objects.select_related(
         'board', 'document'
     ).values('board__slug', 'quantity', 'document__number')
 
-    get_production_quantity(board_list, production_data)
+    get_production_quantity()
+
     context = {
         'board_list': board_list,
         'production_list': production_data,
+        'document_boards': document_boards,
     }
 
     board = 'Круглая'

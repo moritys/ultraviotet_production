@@ -4,6 +4,7 @@
   Производство плат
 {% endblock %}
 {% block content %}
+
 <section class="section">
   <div class="container">
     <h1 class="title">
@@ -11,23 +12,28 @@
     </h1>
   </div>
 </section>
-
+{{ document_boards|pprint }}
 <section class="section">
-  <div class="container">
+  {% for number, boards in document_boards.items %}
+
+
+  <div class="block">
     <div class="box">
       <div class="field">
-        <h5 class="subtitle">Приложение <strong></strong></h5>
+        <h5 class="subtitle">Приложение №
+          <strong>{{ number }}</strong>
+        </h5>
 
         <div class="columns">
 
-          {% for board in board_list %}
+          {% for board in boards %}
             <div class="column">
               <form class="box" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="hidden_stage" value="Новый заказ">
-                <input type="hidden" name="hidden_board" value="{{ board.name }}">
-                <label id="board_data_{{ board.id }}" class="label">
-                  {{ board.name }}: {{ board.total_production_quantity }}
+                <input type="hidden" name="hidden_board" value="{{ board.board.name }}">
+                <label id="board_data_{{ board.board.id }}" class="label">
+                  {{ board.board.name }}: {{ board.board.total_production_quantity }}
                 </label>
                 <div class="field has-addons">
                   <p class="control is-expanded">
@@ -40,14 +46,14 @@
                   </div>
                 </div>
               </form>
-              <a class="button is-success is-light is-fullwidth" 
+              {% comment %} <a class="button is-success is-light is-fullwidth" 
               href=
-              "{% url 'production:board_production' board.slug doc_number %}" 
-              {% if slug == board.slug %} title="Куда перейти? Ты уже тут" 
+              "{% url 'production:board_production' number board.board.slug %}" 
+              {% if slug == board.board.slug %} title="Куда перейти? Ты уже тут" 
               disabled
               {% endif %}>
                 Перейти
-              </a>
+              </a> {% endcomment %}
             </div>
           {% endfor %}
 
@@ -55,6 +61,8 @@
       </div>
     </div>
   </div>
+
+{% endfor %}
 
   <div class="container">
     {% block production %}
@@ -64,7 +72,7 @@
 
 </section>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   $(document).ready(function() {
     function updateBoardData() {
@@ -86,7 +94,7 @@
       });
     }
 
-    setInterval(updateBoardData, 1000);
+    setInterval(updateBoardData, 10000);
   });
-</script>
+</script> {% endcomment %}
 {% endblock %}
