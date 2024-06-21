@@ -48,7 +48,7 @@ def process_db_data(slug, doc_number):
     return context
 
 
-def process_production_form(request, board, stage):
+def process_production_form(request, board, stage, document):
     '''
     Функция для обработки формы.
     '''
@@ -59,7 +59,8 @@ def process_production_form(request, board, stage):
 
             existing_production = Production.objects.filter(
                 board__name=form.cleaned_data['hidden_board'],
-                stage__name=form.cleaned_data['hidden_stage']
+                stage__name=form.cleaned_data['hidden_stage'],
+                document__number=form.changed_data['hidden_document']
             ).first()
 
             if existing_production:
@@ -76,6 +77,9 @@ def process_production_form(request, board, stage):
                 production.stage = Stage.objects.get(
                     name=form.cleaned_data['hidden_stage']
                 )
+                production.document = Document.objects.get(
+                    number=form.cleaned_data['hidden_document']
+                )
                 production.quantity = quantity
                 if decrease_previous_stage_quantity(
                     production, quantity
@@ -87,6 +91,7 @@ def process_production_form(request, board, stage):
         form = ProductionForm(initial={
             'hidden_board': board,
             'hidden_stage': stage,
+            'hidden_document': document
         })
     return form
 
@@ -94,40 +99,45 @@ def process_production_form(request, board, stage):
 def get_production_quantity():
     '''
     Функция для подсчета количества каждой платы для каждого документа.
+    нужно взять все строки производства
+    для каждого документа
+    и для каждой платы
+    и суммировать количество
     '''
-    sum_quantities = Production.objects.values('stage', 'document').annotate(
-        total_quantity=Sum('quantity')
-    )
-    for result in sum_quantities:
-        stage_name = Stage.objects.get(pk=result['stage']).name
-        document_number = Document.objects.get(pk=result['document']).number
-        total_quantity = result['total_quantity']
-        print(f"Для этапа '{stage_name}' и номера документа '{document_number}' суммарное количество плат: {total_quantity}")
+
+    productions = Production.objects.all()
+    summary_dict = {}
+
+    for production in productions:
+        document_number = production.document.number
+        board = production.board
+        quantity = production.quantity
+        if document_number not in summary_dict:
+            summary_dict[document_number] = {}
+        if board not in summary_dict[document_number]:
+            summary_dict[document_number][board] = 0
+        summary_dict[document_number][board] += quantity
+
+    return summary_dict
 
 
 def production(request):
     '''Функция общей страницы производства.'''
     template_name = 'production/production.html'
-    board_list = Board.objects.values('id', 'slug', 'name')
-    documents = Document.objects.values('number').distinct()
-    document_boards = {}
+
+    documents = Document.objects.filter(is_done=False)
+    data = []
+
     for document in documents:
-        document_boards[document['number']] = Document.objects.filter(
-            number=document['number']
-        )
-    print(document_boards)
-    production_data = Production.objects.select_related(
-        'board', 'document'
-    ).values('board__slug', 'quantity', 'document__number')
+        boards = Production.objects.filter(
+            document=document
+        ).values('board__name').annotate(total_quantity=Sum('quantity'))
+        data.append({
+            'document': document,
+            'boards': boards
+        })
 
-    get_production_quantity()
-
-    context = {
-        'board_list': board_list,
-        'production_list': production_data,
-        'document_boards': document_boards,
-    }
-
+    context = {'data': data}
     board = 'Круглая'
     stage = 'Сокращение зп'
     form = process_production_form(request, board, stage)
@@ -135,7 +145,7 @@ def production(request):
     return render(request, template_name, context)
 
 
-def board_production(request, slug, number):
+def board_production(request, number, slug):
     '''Функция конкретной страницы производства.'''
     template_name = 'production/board-base.html'
 

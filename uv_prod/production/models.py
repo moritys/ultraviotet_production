@@ -62,14 +62,9 @@ class Document(models.Model):
         verbose_name='Номер приложения',
         help_text='Номер приложения по докам'
     )
-    board = models.ForeignKey(
-        Board,
-        on_delete=models.CASCADE,
-        verbose_name='Плата'
-    )
-    board_quantity = models.PositiveIntegerField(
-        verbose_name='Количество заказанных плат',
-        help_text='Сколько конкретно данных плат заказано'
+    is_done = models.BooleanField(
+        default=False,
+        verbose_name='Отправлено заказчику'
     )
 
     def __str__(self) -> str:

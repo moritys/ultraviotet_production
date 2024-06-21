@@ -12,28 +12,29 @@
     </h1>
   </div>
 </section>
-{{ document_boards|pprint }}
+
 <section class="section">
-  {% for number, boards in document_boards.items %}
+  {% for item in data %}
 
 
   <div class="block">
     <div class="box">
       <div class="field">
         <h5 class="subtitle">Приложение №
-          <strong>{{ number }}</strong>
+          <strong>{{ item.document.number }}</strong>
         </h5>
 
         <div class="columns">
 
-          {% for board in boards %}
+          {% for board in item.boards %}
             <div class="column">
               <form class="box" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="hidden_stage" value="Новый заказ">
-                <input type="hidden" name="hidden_board" value="{{ board.board.name }}">
-                <label id="board_data_{{ board.board.id }}" class="label">
-                  {{ board.board.name }}: {{ board.board.total_production_quantity }}
+                <input type="hidden" name="hidden_board" value="{{ board.board__name }}">
+                <input type="hidden" name="hidden_document" value="{{ document_number }}">
+                <label id="board_data_{{ board.board__id }}" class="label">
+                  {{ board.board__name }}: {{ board.total_quantity }}
                 </label>
                 <div class="field has-addons">
                   <p class="control is-expanded">
@@ -48,11 +49,11 @@
               </form>
               {% comment %} <a class="button is-success is-light is-fullwidth" 
               href=
-              "{% url 'production:board_production' number board.board.slug %}" 
-              {% if slug == board.board.slug %} title="Куда перейти? Ты уже тут" 
+              "{% url 'production:board_production' document_number board.board__slug %}" 
+              {% if slug == board.board__slug %} title="Куда перейти? Ты уже тут" 
               disabled
               {% endif %}>
-                Перейти
+              Перейти
               </a> {% endcomment %}
             </div>
           {% endfor %}
