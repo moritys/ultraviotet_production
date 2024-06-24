@@ -60,7 +60,7 @@ def process_production_form(request, board, stage, document):
             existing_production = Production.objects.filter(
                 board__name=form.cleaned_data['hidden_board'],
                 stage__name=form.cleaned_data['hidden_stage'],
-                document__number=form.changed_data['hidden_document']
+                document__number=form.cleaned_data['hidden_document']
             ).first()
 
             if existing_production:
@@ -131,7 +131,9 @@ def production(request):
     for document in documents:
         boards = Production.objects.filter(
             document=document
-        ).values('board__name').annotate(total_quantity=Sum('quantity'))
+        ).values('board__slug', 'board__name', 'board__id').annotate(
+            total_quantity=Sum('quantity')
+        )
         data.append({
             'document': document,
             'boards': boards
@@ -140,7 +142,8 @@ def production(request):
     context = {'data': data}
     board = 'Круглая'
     stage = 'Сокращение зп'
-    form = process_production_form(request, board, stage)
+    document = '1'
+    form = process_production_form(request, board, stage, document)
     context['form'] = form
     return render(request, template_name, context)
 
@@ -153,7 +156,8 @@ def board_production(request, number, slug):
 
     board = context['board']
     stage = 'Сокращение зп'
-    form = process_production_form(request, board, stage)
+    document = 1
+    form = process_production_form(request, board, stage, document)
     context['form'] = form
 
     return render(request, template_name, context)

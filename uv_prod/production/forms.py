@@ -21,6 +21,13 @@ class ProductionForm(forms.Form):
     hidden_stage = forms.CharField(widget=forms.HiddenInput)
     hidden_document = forms.CharField(widget=forms.HiddenInput)
 
+    def clean_hidden_document(self):
+        data = self.cleaned_data['hidden_document']
+        try:
+            return int(data)
+        except ValueError:
+            raise forms.ValidationError('Номер документа не число.')
+
     def clean(self):
         '''
         Проверка максимального количества.

@@ -65,7 +65,9 @@ def decrease_previous_stage_quantity(
     ).first()
     if previous_stage:
         previous_production = Production.objects.filter(
-            board=current_production.board, stage=previous_stage
+            board=current_production.board,
+            stage=previous_stage,
+            document=current_production.document
         ).first()
         if previous_production:
             try:

@@ -32,7 +32,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="hidden_stage" value="Новый заказ">
                 <input type="hidden" name="hidden_board" value="{{ board.board__name }}">
-                <input type="hidden" name="hidden_document" value="{{ document_number }}">
+                <input type="hidden" name="hidden_document" value="{{ item.document.number|add:'0' }}">
                 <label id="board_data_{{ board.board__id }}" class="label">
                   {{ board.board__name }}: {{ board.total_quantity }}
                 </label>
@@ -47,14 +47,14 @@
                   </div>
                 </div>
               </form>
-              {% comment %} <a class="button is-success is-light is-fullwidth" 
+              <a class="button is-success is-light is-fullwidth" 
               href=
-              "{% url 'production:board_production' document_number board.board__slug %}" 
+              "{% url 'production:board_production' number=item.document.number slug=board.board__slug %}" 
               {% if slug == board.board__slug %} title="Куда перейти? Ты уже тут" 
               disabled
               {% endif %}>
               Перейти
-              </a> {% endcomment %}
+              </a>
             </div>
           {% endfor %}
 
