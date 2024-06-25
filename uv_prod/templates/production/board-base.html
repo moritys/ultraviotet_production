@@ -15,13 +15,14 @@
               <label class="label">{{ board.name }}</label>
               <div class="field has-addons">
               </div>
-              <a class="button is-success is-light is-fullwidth" 
-              href="{% url 'production:board_production' board.slug %}" 
-                {% if slug == board.slug %} title="Куда перейти? Ты уже тут" 
-                disabled
-                {% endif %}>
-                Перейти
-              </a>
+              {% comment %} <a class="button is-success is-light is-fullwidth" 
+              href=
+              "{% url 'production:board_production' number=item.document.number slug=board.board__slug %}" 
+              {% if slug == board.board__slug %} title="Куда перейти? Ты уже тут" 
+              disabled
+              {% endif %}>
+              Перейти
+              </a> {% endcomment %}
             </div>
           {% endfor %}
         </div>
@@ -100,7 +101,7 @@
 </section>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   $(document).ready(function() {
     function updateQuantities() {
@@ -130,6 +131,6 @@
 
     setInterval(updateQuantities, 1000);
   });
-</script>
+</script> {% endcomment %}
 {% endblock %}
 {% endblock %}

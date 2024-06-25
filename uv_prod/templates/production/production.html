@@ -16,7 +16,6 @@
 <section class="section">
   {% for item in data %}
 
-
   <div class="block">
     <div class="box">
       <div class="field">
@@ -77,15 +76,18 @@
 <script>
   $(document).ready(function() {
     function updateBoardData() {
+      var documentNumber = {{ item.document.number }}; // Get the document number from the template context
+
       $('.box').each(function() {
         var form = $(this);
-          
+
         $.ajax({
           type: 'GET',
           url: '{% url "production:board_data" %}',
+          data: { document_number: documentNumber }, // Include the document number as a query parameter
           success: function(response) {
             response.board_data.forEach(function(board) {
-              $('#board_data_' + board.id).text(board.board + ': ' + board.total_production_quantity);
+              $('#board_data_' + board.id).text(board.board + ': ' + board.total_quantity);
             });
           },
           error: function(error) {
@@ -95,7 +97,7 @@
       });
     }
 
-    setInterval(updateBoardData, 10000);
+    setInterval(updateBoardData, 5000);
   });
 </script> {% endcomment %}
 {% endblock %}

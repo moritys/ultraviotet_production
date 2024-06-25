@@ -14,7 +14,7 @@ def process_db_data(slug, doc_number):
     Функция для получения данных из БД.
     '''
     board = get_object_or_404(Board, slug=slug)
-    document = get_object_or_404(Document, number=doc_number, board=board)
+    document = get_object_or_404(Document, number=doc_number)
     board_list = Board.objects.values('slug', 'name')
     production_data = Production.objects.filter(
         board=board, document=document
@@ -22,7 +22,7 @@ def process_db_data(slug, doc_number):
 
     combined_data = []
     stage_components = StageComponentBoardQuantity.objects.filter(
-        board=board, document=document
+        board=board
     ).order_by('stage__order').select_related('stage')
 
     for stage in stage_components:
@@ -41,6 +41,7 @@ def process_db_data(slug, doc_number):
     context = {
         'board_list': board_list,
         'slug': slug,
+        'document': document,
         'board': board,
         'combined_data': combined_data,
         'total_quantity': total_quantity,
@@ -96,36 +97,17 @@ def process_production_form(request, board, stage, document):
     return form
 
 
-def get_production_quantity():
+def get_production_quantity(document_number=None):
     '''
     Функция для подсчета количества каждой платы для каждого документа.
-    нужно взять все строки производства
-    для каждого документа
-    и для каждой платы
-    и суммировать количество
     '''
 
-    productions = Production.objects.all()
-    summary_dict = {}
-
-    for production in productions:
-        document_number = production.document.number
-        board = production.board
-        quantity = production.quantity
-        if document_number not in summary_dict:
-            summary_dict[document_number] = {}
-        if board not in summary_dict[document_number]:
-            summary_dict[document_number][board] = 0
-        summary_dict[document_number][board] += quantity
-
-    return summary_dict
-
-
-def production(request):
-    '''Функция общей страницы производства.'''
-    template_name = 'production/production.html'
-
-    documents = Document.objects.filter(is_done=False)
+    if document_number:
+        documents = Document.objects.filter(
+            number=document_number, is_done=False
+        )
+    else:
+        documents = Document.objects.filter(is_done=False)
     data = []
 
     for document in documents:
@@ -139,7 +121,14 @@ def production(request):
             'boards': boards
         })
 
-    context = {'data': data}
+    return {'data': data}
+
+
+def production(request):
+    '''Функция общей страницы производства.'''
+    template_name = 'production/production.html'
+
+    context = get_production_quantity()
     board = 'Круглая'
     stage = 'Сокращение зп'
     document = '1'
@@ -199,23 +188,25 @@ def update_quantity(request, slug, number):
     return JsonResponse(data)
 
 
-def board_data(request):
-    '''
-    Функция для обновления данных по количеству
-    на общей странице производства через ajax.
-    '''
-    board_list = Board.objects.values('id', 'slug', 'name')
-    production_data = Production.objects.select_related(
-        'board'
-    ).values('board__slug', 'quantity')
+# def board_data(request):
+#     '''
+#     Функция для обновления данных по количеству
+#     на общей странице производства через ajax.
+#     '''
+#     document_number = request.GET.get('document_number')
+#     data = get_production_quantity(document_number)
 
-    get_production_quantity(board_list, production_data)
-    data = {
-        'board_data': [{
-            'id': board['id'],
-            'board': board['name'],
-            'total_production_quantity': board['total_production_quantity'],
-        } for board in board_list],
-    }
+#     board_list = []
+#     for document_data in data['data']:
+#         for board_data in document_data['boards']:
+#             board_list.append(board_data)
 
-    return JsonResponse(data)
+#     data = {
+#         'board_data': [{
+#             'id': board['board__id'],
+#             'board': board['board__name'],
+#             'total_quantity': board['total_quantity'],
+#         } for board in board_list],
+#     }
+
+#     return JsonResponse(data)
