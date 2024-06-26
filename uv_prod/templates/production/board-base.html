@@ -8,21 +8,21 @@
   <div class="container">
     <form class="box">
       <div class="field">
-        <h5 class="subtitle">Платы в производстве</h5>
+        <h5 class="subtitle">Приложение № {{ document.number }}</h5>
         <div class="columns">
           {% for board in board_list %}
             <div class="column">
-              <label class="label">{{ board.name }}</label>
+              <label class="label">{{ board.board__name }}</label>
               <div class="field has-addons">
               </div>
-              {% comment %} <a class="button is-success is-light is-fullwidth" 
+              <a class="button is-success is-light is-fullwidth" 
               href=
-              "{% url 'production:board_production' number=item.document.number slug=board.board__slug %}" 
+              "{% url 'production:board_production' number=document.number slug=board.board__slug %}" 
               {% if slug == board.board__slug %} title="Куда перейти? Ты уже тут" 
               disabled
               {% endif %}>
               Перейти
-              </a> {% endcomment %}
+              </a>
             </div>
           {% endfor %}
         </div>

@@ -21,4 +21,9 @@ urlpatterns = [
         views.board_production,
         name='board_production'
     ),
+    path(
+        '<int:number>/',
+        views.document_production,
+        name='document_production'
+    ),
 ]

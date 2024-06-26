@@ -19,8 +19,12 @@
   <div class="block">
     <div class="box">
       <div class="field">
-        <h5 class="subtitle">Приложение №
-          <strong>{{ item.document.number }}</strong>
+        <h5 class="subtitle">
+          <a class="button is-white" href=
+            "{% url 'production:document_production' number=item.document.number %}">
+              Приложение №
+              <strong>{{ item.document.number }}</strong>
+          </a>
         </h5>
 
         <div class="columns">

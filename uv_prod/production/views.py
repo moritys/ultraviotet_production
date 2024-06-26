@@ -9,13 +9,16 @@ from production.forms import ProductionForm
 from production.utils import decrease_previous_stage_quantity
 
 
-def process_db_data(slug, doc_number):
+def process_db_data(doc_number, slug):
     '''
     Функция для получения данных из БД.
     '''
     board = get_object_or_404(Board, slug=slug)
     document = get_object_or_404(Document, number=doc_number)
-    board_list = Board.objects.values('slug', 'name')
+
+    board_list = Production.objects.filter(
+        document=document
+    ).values('board__slug', 'board__name').distinct()
     production_data = Production.objects.filter(
         board=board, document=document
     )
@@ -40,11 +43,28 @@ def process_db_data(slug, doc_number):
     total_quantity = sum(data['quantity'] for data in combined_data)
     context = {
         'board_list': board_list,
-        'slug': slug,
+        'slug': slug if slug else None,
         'document': document,
         'board': board,
         'combined_data': combined_data,
         'total_quantity': total_quantity,
+    }
+    return context
+
+
+def process_db_data_document(doc_number):
+    '''
+    Функция для получения данных из БД для приложения.
+    '''
+    document = get_object_or_404(Document, number=doc_number)
+
+    board_list = Production.objects.filter(
+        document=document
+    ).values('board__slug', 'board__name').distinct()
+
+    context = {
+        'board_list': board_list,
+        'document': document,
     }
     return context
 
@@ -137,11 +157,20 @@ def production(request):
     return render(request, template_name, context)
 
 
+def document_production(request, number):
+    '''Функция для приложения.'''
+    template_name = 'production/document.html'
+
+    context = process_db_data_document(number)
+
+    return render(request, template_name, context)
+
+
 def board_production(request, number, slug):
-    '''Функция конкретной страницы производства.'''
+    '''Функция конкретной страницы производства для плат.'''
     template_name = 'production/board-base.html'
 
-    context = process_db_data(slug, number)
+    context = process_db_data(number, slug)
 
     board = context['board']
     stage = 'Сокращение зп'
@@ -163,7 +192,7 @@ def update_quantity(request, slug, number):
     production_data_not_cabel = Production.objects.filter(
         stage__cable_stage=False, board__slug=slug
     )
-    db_data = process_db_data(slug, number)
+    db_data = process_db_data(number, slug)
     board_name = db_data['board'].name
     board_total_quantity = db_data['total_quantity']
 
