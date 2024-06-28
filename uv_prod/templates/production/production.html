@@ -3,6 +3,20 @@
 {% block title %}
   Производство плат
 {% endblock %}
+{% block breadcrumbs %}
+<section class="section">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        {% for doc in document_list %}
+          <li><a href="{% url 'production:document_production' number=doc.number %}">Приложение №{{ doc.number }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+  </div>
+</section>
+{% endblock%}
+
 {% block content %}
 
 <section class="section">

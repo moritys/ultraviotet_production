@@ -18,7 +18,7 @@ class ProductionAdmin(admin.ModelAdmin):
         'document',
     )
     search_fields = ('board', 'document',)
-    list_filter = ('stage', 'document',)
+    list_filter = ('board', 'document',)
     list_display_links = ('board',)
 
 

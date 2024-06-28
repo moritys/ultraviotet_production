@@ -22,6 +22,7 @@ def process_db_data(doc_number, slug):
     production_data = Production.objects.filter(
         board=board, document=document
     )
+    document_list = Document.objects.all().values('number')
 
     combined_data = []
     stage_components = StageComponentBoardQuantity.objects.filter(
@@ -48,6 +49,7 @@ def process_db_data(doc_number, slug):
         'board': board,
         'combined_data': combined_data,
         'total_quantity': total_quantity,
+        'document_list': document_list,
     }
     return context
 
@@ -135,7 +137,7 @@ def get_production_quantity(document_number=None):
             document=document
         ).values('board__slug', 'board__name', 'board__id').annotate(
             total_quantity=Sum('quantity')
-        )
+        ).order_by('board__id')
         data.append({
             'document': document,
             'boards': boards
@@ -154,14 +156,17 @@ def production(request):
     document = '1'
     form = process_production_form(request, board, stage, document)
     context['form'] = form
+    context['document_list'] = Document.objects.all().values('number')
     return render(request, template_name, context)
 
 
 def document_production(request, number):
     '''Функция для приложения.'''
     template_name = 'production/document.html'
+    document_list = Document.objects.all().values('number')
 
     context = process_db_data_document(number)
+    context['document_list'] = document_list
 
     return render(request, template_name, context)
 
@@ -173,7 +178,7 @@ def board_production(request, number, slug):
     context = process_db_data(number, slug)
 
     board = context['board']
-    stage = 'Сокращение зп'
+    stage = 'Новый заказ'
     document = 1
     form = process_production_form(request, board, stage, document)
     context['form'] = form
@@ -181,40 +186,40 @@ def board_production(request, number, slug):
     return render(request, template_name, context)
 
 
-def update_quantity(request, slug, number):
-    '''
-    Функция для обновления данных по количеству
-    на странице конкретной платы через ajax.
-    '''
-    production_data_cabel = Production.objects.filter(
-        stage__cable_stage=True, board__slug=slug
-    )
-    production_data_not_cabel = Production.objects.filter(
-        stage__cable_stage=False, board__slug=slug
-    )
-    db_data = process_db_data(number, slug)
-    board_name = db_data['board'].name
-    board_total_quantity = db_data['total_quantity']
+# def update_quantity(request, slug, number):
+#     '''
+#     Функция для обновления данных по количеству
+#     на странице конкретной платы через ajax.
+#     '''
+#     production_data_cabel = Production.objects.filter(
+#         stage__cable_stage=True, board__slug=slug
+#     )
+#     production_data_not_cabel = Production.objects.filter(
+#         stage__cable_stage=False, board__slug=slug
+#     )
+#     db_data = process_db_data(number, slug)
+#     board_name = db_data['board'].name
+#     board_total_quantity = db_data['total_quantity']
 
-    data = {
-        'production_data_cabel': [{
-            'id': production.id,
-            'board': production.board.name,
-            'stage': production.stage.name,
-            'quantity': production.quantity,
-        } for production in production_data_cabel],
-        'production_data_not_cabel': [{
-            'id': production.id,
-            'board': production.board.name,
-            'stage': production.stage.name,
-            'quantity': production.quantity,
-        } for production in production_data_not_cabel],
-        'production_count': {
-            'name': board_name,
-            'total_quantity': board_total_quantity
-        }
-    }
-    return JsonResponse(data)
+#     data = {
+#         'production_data_cabel': [{
+#             'id': production.id,
+#             'board': production.board.name,
+#             'stage': production.stage.name,
+#             'quantity': production.quantity,
+#         } for production in production_data_cabel],
+#         'production_data_not_cabel': [{
+#             'id': production.id,
+#             'board': production.board.name,
+#             'stage': production.stage.name,
+#             'quantity': production.quantity,
+#         } for production in production_data_not_cabel],
+#         'production_count': {
+#             'name': board_name,
+#             'total_quantity': board_total_quantity
+#         }
+#     }
+#     return JsonResponse(data)
 
 
 # def board_data(request):

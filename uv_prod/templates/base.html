@@ -13,6 +13,7 @@
   <body>
     {% include "includes/header.html" %}
     <main>
+      {% block breadcrumbs %} {% endblock %}
       {% block content %}Контента пока нет :( {% endblock %}
     </main>
     {% comment %} {% include "includes/footer.html" %} {% endcomment %}

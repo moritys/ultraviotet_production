@@ -4,6 +4,7 @@
 Производство плат: {{ board.name|lower }}
 {% endblock %}
 {% block content %}
+
 <section class="section">
   <div class="container">
     <form class="box">
@@ -51,6 +52,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
                 <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                <input type="hidden" name="hidden_document" value="{{ document.number }}">
                 <label id="quantity_cabel_{{ data.production_id }}" class="label">
                   {{ data.stage }}: {{ data.quantity }}
                 </label>
@@ -77,6 +79,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
                 <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                <input type="hidden" name="hidden_document" value="{{ document.number }}">
                 <label id="quantity_not_cabel_{{ data.production_id }}" class="label">
                   {{ data.stage }}: {{ data.quantity }}
                 </label>

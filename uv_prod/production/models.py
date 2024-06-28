@@ -110,6 +110,7 @@ class Production(models.Model):
         return f'{self.board.name} - {self.stage.name} - {self.quantity}'
 
     class Meta:
+        unique_together = ('stage', 'board', 'document')
         verbose_name = 'Текущее производство: статус и количество'
         verbose_name_plural = 'Текущее производство: статус и количество'
 
