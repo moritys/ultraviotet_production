@@ -104,7 +104,7 @@
 </section>
 
 
-{% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   $(document).ready(function() {
     function updateQuantities() {
@@ -113,7 +113,7 @@
           
         $.ajax({
           type: 'GET',
-          url: '{% url "production:update_quantity" board.slug %}',
+          url: '{% url "production:update_quantity" number=document.number slug=board.slug %}',
           success: function(response) {
             response.production_data_cabel.forEach(function(production) {
               $('#quantity_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
@@ -134,6 +134,6 @@
 
     setInterval(updateQuantities, 1000);
   });
-</script> {% endcomment %}
+</script>
 {% endblock %}
 {% endblock %}

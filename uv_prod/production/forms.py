@@ -35,6 +35,7 @@ class ProductionForm(forms.Form):
         '''
         super().clean()
         hidden_stage = self.cleaned_data['hidden_stage']
+        hidden_document = self.cleaned_data['hidden_document']
         hidden_stage_order = Stage.objects.get(name=hidden_stage).order
 
         quantity = self.cleaned_data['quantity']
@@ -45,7 +46,9 @@ class ProductionForm(forms.Form):
             ).first()
 
             if previous_stage:
-                max_quantity = previous_stage.production_set.first().quantity
+                max_quantity = previous_stage.production_set.filter(
+                    document__number=hidden_document
+                ).first().quantity
                 if quantity > max_quantity:
                     raise ValidationError(
                         'Значение не должно быть больше, '

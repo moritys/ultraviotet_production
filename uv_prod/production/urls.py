@@ -11,11 +11,11 @@ urlpatterns = [
     #     views.board_data,
     #     name='board_data'
     # ),
-    # path(
-    #     '<int:number>/<slug:slug>/update_quantity/',
-    #     views.update_quantity,
-    #     name='update_quantity'
-    # ),
+    path(
+        '<int:number>/<slug:slug>/update_quantity/',
+        views.update_quantity,
+        name='update_quantity'
+    ),
     path(
         '<int:number>/<slug:slug>/',
         views.board_production,
