@@ -41,6 +41,15 @@
   </div>
   <hr>
 
+  {% if form.non_field_errors %}
+    <div class="notification is-danger is-light">
+      <button class="delete"></button>
+      {% for error in form.non_field_errors %}
+        <p>{{ error|linebreaks }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <div class="container">
     <div class="field">
       <div class="columns">
@@ -132,7 +141,16 @@
       });
     }
 
-    setInterval(updateQuantities, 1000);
+    setInterval(updateQuantities, 5000);
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+      const $notification = $delete.parentNode;
+  
+      $delete.addEventListener('click', () => {
+        $notification.parentNode.removeChild($notification);
+      });
+    });
   });
 </script>
 {% endblock %}

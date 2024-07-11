@@ -88,9 +88,12 @@ def process_production_form(request, board, stage, document):
 
             if existing_production:
                 existing_production.quantity += quantity
-                if decrease_previous_stage_quantity(
+                error_message = decrease_previous_stage_quantity(
                     existing_production, quantity
-                ):
+                )
+                if error_message:
+                    form.add_error(None, error_message)
+                else:
                     existing_production.save()
             else:
                 production = Production()
@@ -104,12 +107,16 @@ def process_production_form(request, board, stage, document):
                     number=form.cleaned_data['hidden_document']
                 )
                 production.quantity = quantity
-                if decrease_previous_stage_quantity(
+                error_message = decrease_previous_stage_quantity(
                     production, quantity
-                ):
+                )
+                if error_message:
+                    form.add_error(None, error_message)
+                else:
                     production.save()
 
-        form = ProductionForm()
+        else:
+            form = ProductionForm()
     else:
         form = ProductionForm(initial={
             'hidden_board': board,
