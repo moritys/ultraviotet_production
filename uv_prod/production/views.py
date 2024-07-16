@@ -95,6 +95,7 @@ def process_production_form(request, board, stage, document):
                     form.add_error(None, error_message)
                 else:
                     existing_production.save()
+                    form = ProductionForm()
             else:
                 production = Production()
                 production.board = Board.objects.get(
@@ -114,6 +115,7 @@ def process_production_form(request, board, stage, document):
                     form.add_error(None, error_message)
                 else:
                     production.save()
+                    form = ProductionForm()
 
         else:
             form = ProductionForm()
@@ -123,6 +125,7 @@ def process_production_form(request, board, stage, document):
             'hidden_stage': stage,
             'hidden_document': document
         })
+
     return form
 
 
