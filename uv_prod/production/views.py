@@ -30,7 +30,10 @@ def process_db_data(doc_number, slug):
     ).order_by('stage__order').select_related('stage')
 
     for stage in stage_components:
-        production = production_data.filter(stage=stage.stage).first()
+        production = production_data.filter(
+            stage=stage.stage,
+            document=document
+        ).first()
         quantity = production.quantity if production else 0
         combined_data.append(
             {
@@ -93,6 +96,7 @@ def process_production_form(request, board, stage, document):
                 )
                 if error_message:
                     form.add_error(None, error_message)
+                    form.data = form.initial
                 else:
                     existing_production.save()
                     form = ProductionForm()
@@ -113,6 +117,7 @@ def process_production_form(request, board, stage, document):
                 )
                 if error_message:
                     form.add_error(None, error_message)
+                    form.data = form.initial
                 else:
                     production.save()
                     form = ProductionForm()

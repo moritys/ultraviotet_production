@@ -1,5 +1,33 @@
 # ultraviolet_production
 
+## Реализованный проект
+
+### Технологии
+
+- Django 5.0.3
+
+### Инструкции
+
+1. Клонировать репозиторий
+
+``` bash
+git clone https://github.com/moritys/ProninTeamTest.git
+```
+
+2. Запустить контейнер
+
+``` bash
+(sudo) docker-compose up -d --build
+```
+
+3. Провести миграции внутри контейнера после его запуска
+
+``` bash
+(sudo) docker-compose exec web python manage.py migrate 
+(sudo) docker-compose exec web python manage.py createsuperuser 
+(sudo) docker-compose exec web python manage.py collectstatic --no-input
+```
+
 ## Стадии работы с проектом
 
 Базовое и приложения вносятся с админки
@@ -19,7 +47,6 @@
 4. Когда плата переходит в статус "Отгружено" и количество как в приложении,
 то у приложения появляется отметка Готово и оно пропадает с главной страницы,
 но остается в админке
-
 
 Стадии изготовления:
 
