@@ -1,0 +1,67 @@
+{% extends "production/production.html" %}
+{% load static %}
+{% block title %}
+Приложение № {{ document.number }}
+{% endblock %}
+{% block content %}
+
+<section class="section">
+  <div class="container">
+    <form class="box">
+      <div class="field">
+        <h5 class="subtitle">Приложение № {{ document.number }}</h5>
+        <div class="columns">
+          {% for board in board_list %}
+            <div class="column">
+              <label class="label">{{ board.board__name }}</label>
+              <div class="field has-addons">
+              </div>
+              <a class="button is-success is-light is-fullwidth" 
+              href=
+              "{% url 'production:board_production' number=document.number slug=board.board__slug %}">
+              Перейти
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% block production %}
+
+
+{% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    function updateQuantities() {
+      $('.box').each(function() {
+        var form = $(this);
+          
+        $.ajax({
+          type: 'GET',
+          url: '{% url "production:update_quantity" board.slug %}',
+          success: function(response) {
+            response.production_data_cabel.forEach(function(production) {
+              $('#quantity_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
+            });
+                
+            response.production_data_not_cabel.forEach(function(production) {
+              $('#quantity_not_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
+            });
+
+            $('#production_count').text(response.production_count.name + ': ' + response.production_count.total_quantity + ' в работе');
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        });
+      });
+    }
+
+    setInterval(updateQuantities, 1000);
+  });
+</script> {% endcomment %}
+{% endblock %}
+{% endblock %}

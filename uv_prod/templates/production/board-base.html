@@ -4,23 +4,25 @@
 Производство плат: {{ board.name|lower }}
 {% endblock %}
 {% block content %}
+
 <section class="section">
   <div class="container">
     <form class="box">
       <div class="field">
-        <h5 class="subtitle">Платы в производстве</h5>
+        <h5 class="subtitle">Приложение № {{ document.number }}</h5>
         <div class="columns">
           {% for board in board_list %}
             <div class="column">
-              <label class="label">{{ board.name }}</label>
+              <label class="label">{{ board.board__name }}</label>
               <div class="field has-addons">
               </div>
               <a class="button is-success is-light is-fullwidth" 
-              href="{% url 'production:board_production' board.slug %}" 
-                {% if slug == board.slug %} title="Куда перейти? Ты уже тут" 
-                disabled
-                {% endif %}>
-                Перейти
+              href=
+              "{% url 'production:board_production' number=document.number slug=board.board__slug %}" 
+              {% if slug == board.board__slug %} title="Куда перейти? Ты уже тут" 
+              disabled
+              {% endif %}>
+              Перейти
               </a>
             </div>
           {% endfor %}
@@ -39,10 +41,19 @@
   </div>
   <hr>
 
+  {% if form.non_field_errors %}
+    <div class="notification is-danger is-light">
+      <button class="delete"></button>
+      {% for error in form.non_field_errors %}
+        <p>{{ error|linebreaks }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <div class="container">
     <div class="field">
       <div class="columns">
-        <div class="column">
+        <div class="column" id="production-data-cabel">
           <h5 class="subtitle">Состояние шлейфа</h5>
           {% for data in combined_data %}
             {% if data.cable %}
@@ -50,6 +61,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
                 <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                <input type="hidden" name="hidden_document" value="{{ document.number }}">
                 <label id="quantity_cabel_{{ data.production_id }}" class="label">
                   {{ data.stage }}: {{ data.quantity }}
                 </label>
@@ -76,6 +88,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="hidden_stage" value="{{ data.stage }}">
                 <input type="hidden" name="hidden_board" value="{{ board.name }}">
+                <input type="hidden" name="hidden_document" value="{{ document.number }}">
                 <label id="quantity_not_cabel_{{ data.production_id }}" class="label">
                   {{ data.stage }}: {{ data.quantity }}
                 </label>
@@ -99,7 +112,6 @@
   </div>
 </section>
 
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
   $(document).ready(function() {
@@ -109,7 +121,7 @@
           
         $.ajax({
           type: 'GET',
-          url: '{% url "production:update_quantity" board.slug %}',
+          url: '{% url "production:update_quantity" number=document.number slug=board.slug %}',
           success: function(response) {
             response.production_data_cabel.forEach(function(production) {
               $('#quantity_cabel_' + production.id).text(production.stage + ': ' + production.quantity);
@@ -128,7 +140,16 @@
       });
     }
 
-    setInterval(updateQuantities, 1000);
+    setInterval(updateQuantities, 5000);
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+      const $notification = $delete.parentNode;
+  
+      $delete.addEventListener('click', () => {
+        $notification.parentNode.removeChild($notification);
+      });
+    });
   });
 </script>
 {% endblock %}
