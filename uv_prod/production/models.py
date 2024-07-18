@@ -57,6 +57,25 @@ class Stage(models.Model):
         verbose_name_plural = 'Этапы производства'
 
 
+class Document(models.Model):
+    number = models.PositiveSmallIntegerField(
+        verbose_name='Номер приложения',
+        help_text='Номер приложения по докам'
+    )
+    is_done = models.BooleanField(
+        default=False,
+        verbose_name='Отправлено заказчику'
+    )
+
+    def __str__(self) -> str:
+        return f'Приложение {self.number}'
+
+    class Meta:
+        ordering = ('number',)
+        verbose_name = 'Приложение'
+        verbose_name_plural = 'Приложения'
+
+
 class Production(models.Model):
     '''
     Модель производства.
@@ -81,11 +100,17 @@ class Production(models.Model):
         verbose_name='Количество на этапе',
         help_text='Количество заданных плат на этом этапе'
     )
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.CASCADE,
+        verbose_name='Номер прилы'
+    )
 
     def __str__(self):
         return f'{self.board.name} - {self.stage.name} - {self.quantity}'
 
     class Meta:
+        unique_together = ('stage', 'board', 'document')
         verbose_name = 'Текущее производство: статус и количество'
         verbose_name_plural = 'Текущее производство: статус и количество'
 

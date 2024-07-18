@@ -65,16 +65,21 @@ def decrease_previous_stage_quantity(
     ).first()
     if previous_stage:
         previous_production = Production.objects.filter(
-            board=current_production.board, stage=previous_stage
+            board=current_production.board,
+            stage=previous_stage,
+            document=current_production.document
         ).first()
         if previous_production:
             try:
+                prev_quant = previous_production.quantity
                 previous_production.quantity -= current_quantity
                 previous_production.save()
-            except Exception as ex:
-                print(
-                    'В предыдущем статусе нет плат: '
-                    f'{ex}'
+            except Exception:
+                return (
+                    f'Нельзя перевести "{previous_stage}" -> '
+                    f'"{current_production.stage}". \n'
+                    'Недостаточное количество в предыдущем статусе! \n'
+                    f'{prev_quant} -> '
+                    f'{current_quantity}'
                 )
-                return False
-    return True
+    return None

@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from .models import Board, Production, Stage, StageComponentBoardQuantity
+from .models import (
+    Board, Document, Production,
+    Stage, StageComponentBoardQuantity
+)
 
 
 class ProductionAdmin(admin.ModelAdmin):
@@ -8,12 +11,14 @@ class ProductionAdmin(admin.ModelAdmin):
         'board',
         'stage',
         'quantity',
+        'document',
     )
     list_editable = (
         'quantity',
+        'document',
     )
-    search_fields = ('board',)
-    list_filter = ('stage',)
+    search_fields = ('board', 'document',)
+    list_filter = ('board', 'document',)
     list_display_links = ('board',)
 
 
@@ -58,7 +63,20 @@ class StageComponentBoardQuantityAdmin(admin.ModelAdmin):
     list_display_links = ('board',)
 
 
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = (
+        'number',
+        'is_done',
+    )
+    list_editable = (
+        'is_done',
+    )
+    search_fields = ('number',)
+    list_display_links = ('number',)
+
+
 admin.site.register(Board, BoardAdmin)
+admin.site.register(Document, DocumentAdmin)
 admin.site.register(Stage, StageAdmin)
 admin.site.register(
     StageComponentBoardQuantity, StageComponentBoardQuantityAdmin
