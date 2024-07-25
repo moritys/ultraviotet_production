@@ -66,6 +66,26 @@ class Document(models.Model):
         default=False,
         verbose_name='Отправлено заказчику'
     )
+    central_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество центральных',
+        help_text='Количество центральных'
+    )
+    facial_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество лицевых',
+        help_text='Количество лицевых'
+    )
+    round_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество круглых',
+        help_text='Количество круглых'
+    )
+    indicator_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество индикаторных',
+        help_text='Количество индикаторных'
+    )
 
     def __str__(self) -> str:
         return f'Приложение {self.number}'

@@ -67,6 +67,10 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = (
         'number',
         'is_done',
+        'central_q',
+        'facial_q',
+        'round_q',
+        'indicator_q',
     )
     list_editable = (
         'is_done',

@@ -83,3 +83,22 @@ def decrease_previous_stage_quantity(
                     f'{current_quantity}'
                 )
     return None
+
+
+def calculate_components_for_document(document):
+    production_entries = Production.objects.filter(document=document)
+    components_quantity = {}
+
+    for entry in production_entries:
+        stage_components = StageComponentBoardQuantity.objects.filter(
+            board=entry.board, stage=entry.stage
+        )
+
+        for scbq in stage_components:
+            if scbq.component not in components_quantity:
+                components_quantity[scbq.component] = 0
+            components_quantity[scbq.component] += (
+                scbq.quantity * entry.quantity
+            )
+
+    return components_quantity
