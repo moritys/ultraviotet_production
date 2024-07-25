@@ -5,8 +5,8 @@ class Component(models.Model):
     name = models.CharField(
         max_length=50,
         verbose_name='Название',
-        help_text='Уникальное название компонента, не более 50 символов'
-        )
+        help_text='Схема названия: "Part | Footprint"'
+    )
     description = models.TextField(
         blank=True,
         null=True,
@@ -21,6 +21,11 @@ class Component(models.Model):
         null=True,
         verbose_name='Критическое количество',
         help_text='Когда уже пора заказывать'
+    )
+    part_number = models.CharField(
+        max_length=50,
+        verbose_name='Номер партии',
+        help_text='Пример: "CL10B104KB8NNNC"'
     )
 
     def __str__(self):
