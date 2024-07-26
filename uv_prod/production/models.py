@@ -59,6 +59,7 @@ class Stage(models.Model):
 
 class Document(models.Model):
     number = models.PositiveSmallIntegerField(
+        unique=True,
         verbose_name='Номер приложения',
         help_text='Номер приложения по докам'
     )
