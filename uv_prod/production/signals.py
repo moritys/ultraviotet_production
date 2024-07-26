@@ -2,9 +2,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from .models import (
-    Document, Production, Board, Stage, StageComponentBoardQuantity
+    Document, Production, Board, StageComponentBoardQuantity
 )
-from .utils import calculate_components_for_document
 
 
 def create_production_for_document(document):
@@ -46,8 +45,3 @@ def create_production_for_document(document):
 def handle_new_document(sender, instance, created, **kwargs):
     if created:
         create_production_for_document(instance)
-
-        components_quantity = calculate_components_for_document(instance)
-
-        for component, quantity in components_quantity.items():
-            pass

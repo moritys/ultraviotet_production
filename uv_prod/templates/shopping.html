@@ -10,7 +10,44 @@
     <h1 class="title">
       Это страница со списком покупок
     </h1>
+  </div>
+</section>
 
+<section class="section">
+  <div class="container">
+    <h2 class="subtitle">На новые приложения нужно закупить</h2>
+    <div class="columns">
+      <div class="column is-two-thirds">
+        <table class="table is-striped is-hoverable is-fullwidth">
+          <thead>
+            <tr>
+              <th>Наименование</th>
+              <th>Количество</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th>Наименование</th>
+              <th>Количество</th>
+            </tr>
+          </tfoot>
+          <tbody>
+            <ul>
+              {% for document, components in document_components_quantities.items %}
+                  <li>
+                      <h2>{{ document }}</h2>
+                      <ul>
+                          {% for component, quantity in components.items %}
+                              <li>{{ component }}: {{ quantity }}</li>
+                          {% endfor %}
+                      </ul>
+                  </li>
+              {% endfor %}
+          </ul>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}
