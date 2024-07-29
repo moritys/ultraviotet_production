@@ -59,12 +59,33 @@ class Stage(models.Model):
 
 class Document(models.Model):
     number = models.PositiveSmallIntegerField(
+        unique=True,
         verbose_name='Номер приложения',
         help_text='Номер приложения по докам'
     )
     is_done = models.BooleanField(
         default=False,
         verbose_name='Отправлено заказчику'
+    )
+    central_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество центральных',
+        help_text='Количество центральных'
+    )
+    facial_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество лицевых',
+        help_text='Количество лицевых'
+    )
+    round_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество круглых',
+        help_text='Количество круглых'
+    )
+    indicator_q = models.PositiveSmallIntegerField(
+        blank=True, null=True,
+        verbose_name='Количество индикаторных',
+        help_text='Количество индикаторных'
     )
 
     def __str__(self) -> str:
@@ -148,7 +169,7 @@ class StageComponentBoardQuantity(models.Model):
     )
 
     class Meta:
-        unique_together = ('stage', 'board')
+        unique_together = ('stage', 'board', 'component')
         verbose_name = 'Схема: Связь этапа и количества компонентов'
         verbose_name_plural = 'Схема: Связь этапа и количества компонентов'
 
