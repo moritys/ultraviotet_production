@@ -8,45 +8,42 @@
 <section class="section">
   <div class="container">
     <h1 class="title">
-      Это страница со списком покупок
+      На новые приложения нужно закупить:
     </h1>
+    <form method="get" action="{% url 'shopping:generate_excel_report' %}">
+      <button class="button is-light" type="submit">Скачать отчет в Excel</button>
+    </form>
   </div>
 </section>
 
 <section class="section">
   <div class="container">
-    <h2 class="subtitle">На новые приложения нужно закупить</h2>
     <div class="columns">
-      <div class="column is-two-thirds">
-        <table class="table is-striped is-hoverable is-fullwidth">
+      {% for document, components in document_components_quantities.items %}
+      
+      <div class="column">
+        <h4 class="subtitle is-3">{{ document }}</h4>
+        <table class="table is-hoverable is-fullwidth is-bordered">
           <thead>
             <tr>
               <th>Наименование</th>
               <th>Количество</th>
+              <th>На складе</th>
             </tr>
           </thead>
-          <tfoot>
-            <tr>
-              <th>Наименование</th>
-              <th>Количество</th>
-            </tr>
-          </tfoot>
           <tbody>
-            <ul>
-              {% for document, components in document_components_quantities.items %}
-                  <li>
-                      <h2>{{ document }}</h2>
-                      <ul>
-                          {% for component, quantity in components.items %}
-                              <li>{{ component }}: {{ quantity }}</li>
-                          {% endfor %}
-                      </ul>
-                  </li>
+              {% for component, quantities in components.items %}
+                <tr 
+                {% if quantities.calculated > quantities.stock %} class="is-danger" {% endif %}>
+                  <th>{{ component.name }}</th>
+                  <td>{{ quantities.calculated }}</td>
+                  <td>{{ quantities.stock }}</td>
+                </tr>
               {% endfor %}
-          </ul>
           </tbody>
         </table>
       </div>
+      {% endfor %}
     </div>
   </div>
 </section>

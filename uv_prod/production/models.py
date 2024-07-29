@@ -169,7 +169,7 @@ class StageComponentBoardQuantity(models.Model):
     )
 
     class Meta:
-        unique_together = ('stage', 'board')
+        unique_together = ('stage', 'board', 'component')
         verbose_name = 'Схема: Связь этапа и количества компонентов'
         verbose_name_plural = 'Схема: Связь этапа и количества компонентов'
 

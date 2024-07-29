@@ -13,6 +13,7 @@ def create_production_for_document(document):
         'round': document.round_q,
         'indicator': document.indicator_q,
     }
+    print(board_quantities)
 
     for board_slug, quantity in board_quantities.items():
         if quantity:
@@ -38,6 +39,8 @@ def create_production_for_document(document):
                         document=document
                     )
             except Board.DoesNotExist:
+                pass
+            except Exception:
                 pass
 
 

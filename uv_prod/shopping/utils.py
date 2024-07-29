@@ -2,40 +2,61 @@ from production.models import Production, StageComponentBoardQuantity, Stage
 
 
 def document_is_new(document):
+    if document.is_done:
+        return False
+
     initial_stage = Stage.objects.all().order_by('order').first()
+    work_stages = Stage.objects.all().order_by('order')[1:]
 
-    if not document.is_done:
-        new_doc = Production.objects.filter(
-            document=document, stage=initial_stage
-        )
-        if new_doc.exists():
-            return True
+    initial_production = Production.objects.filter(
+        document=document, stage=initial_stage
+    ).first()
 
-    return False
+    if not initial_production or initial_production.quantity == 0:
+        return False
+
+    for stage in work_stages:
+        work_production = Production.objects.filter(
+            document=document, stage=stage
+        ).first()
+        if work_production and work_production.quantity != 0:
+            return False
+
+    return True
 
 
 def calculate_components_for_document(document):
-    '''
-    нужно умножать не на production.quantity
-    а на количество плат в статусе новый заказ
-    '''
-    productions = Production.objects.filter(document=document)
-    initial_stage = Stage.objects.all().order_by('order').first()
+    """
+    Функция для подсчета количества компонентов 
+    для каждого нового документа по схеме.
+    """
+    board_quantities = {
+        'central': document.central_q or 0,
+        'facial': document.facial_q or 0,
+        'round': document.round_q or 0,
+        'indicator': document.indicator_q or 0,
+    }
     components_quantity = {}
 
-    for production in productions:
+    ordered_boards = {
+        board: quantity for board, quantity in board_quantities.items() if quantity > 0
+    }
+
+    for board, quantity in ordered_boards.items():
         schemes = StageComponentBoardQuantity.objects.filter(
-            board=production.board, stage=production.stage, component__isnull=False
+            board__slug=board,
+            component__isnull=False
         )
-        
-        initial_quantity = 
 
         for scheme in schemes:
-            if scheme.component not in components_quantity:
-                components_quantity[scheme.component] = 0
-            components_quantity[scheme.component] += (
-                scheme.quantity * production.quantity
-            )
-            print(f"Document: {document}, Component: {scheme.component}, Quantity: {components_quantity[scheme.component]}")
+            component = scheme.component
+
+            if component not in components_quantity:
+                components_quantity[component] = {
+                    'calculated': 0,
+                    'stock': component.quantity
+                }
+
+            components_quantity[component]['calculated'] += scheme.quantity * quantity
 
     return components_quantity
