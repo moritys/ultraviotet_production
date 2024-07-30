@@ -21,26 +21,38 @@ def process_db_data(doc_number, slug):
     ).values('board__slug', 'board__name').distinct()
     production_data = Production.objects.filter(
         board=board, document=document
-    )
+    ).select_related('stage')
     document_list = Document.objects.all().values('number')
 
     combined_data = []
+    stage_components_map = {}
+
     stage_components = StageComponentBoardQuantity.objects.filter(
         board=board
-    ).order_by('stage__order').select_related('stage')
+    ).order_by('stage__order').select_related('stage', 'component')
 
     for stage in stage_components:
+        if stage.stage not in stage_components_map:
+            stage_components_map[stage.stage] = []
+        stage_components_map[stage.stage].append(
+            {
+                'component': stage.component,
+                'quantity': stage.quantity
+            }
+        )
+
+    for stage, components in stage_components_map.items():
         production = production_data.filter(
-            stage=stage.stage,
-            document=document
+            stage=stage, document=document
         ).first()
         quantity = production.quantity if production else 0
         combined_data.append(
             {
                 'production_id': production.id if production else 0,
-                'stage': stage.stage,
+                'stage': stage,
                 'quantity': quantity,
-                'cable': stage.stage.cable_stage,
+                'cable': stage.cable_stage,
+                'components': components
             }
         )
 

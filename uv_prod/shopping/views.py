@@ -2,8 +2,6 @@ from django.shortcuts import render
 import pandas as pd
 from datetime import datetime
 from django.http import HttpResponse
-from openpyxl.utils import get_column_letter
-from openpyxl import load_workbook
 
 from .utils import calculate_components_for_document, document_is_new
 from production.models import Document
@@ -17,7 +15,7 @@ def shopping(request):
 
     for document in documents:
         if document_is_new(document):
-            document_components_quantities[document] = calculate_components_for_document(document)
+            document_components_quantities[document] = calculate_components_for_document(document)  # noqa
 
     context = {
         'document_components_quantities': document_components_quantities
@@ -35,14 +33,14 @@ def generate_excel_report(request):
 
     for document in documents:
         if document_is_new(document):
-            document_components_quantities = calculate_components_for_document(document)
-            for component, quantities in document_components_quantities.items():
+            document_components_quantities = calculate_components_for_document(document)  # noqa
+            for component, quantities in document_components_quantities.items():  # noqa
                 if component not in total_components_quantities:
                     total_components_quantities[component] = {
                         'calculated': 0,
                         'stock': quantities['stock']
                     }
-                total_components_quantities[component]['calculated'] += quantities['calculated']
+                total_components_quantities[component]['calculated'] += quantities['calculated']  # noqa
 
     data = {
         'Component': [],
@@ -60,9 +58,9 @@ def generate_excel_report(request):
     # Создание таблицы с Pandas и запись в Excel
     df = pd.DataFrame(data)
     response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'  # noqa
     )
-    response['Content-Disposition'] = f'attachment; filename=components_report_{formatted_datetime}.xlsx'
+    response['Content-Disposition'] = f'attachment; filename=components_report_{formatted_datetime}.xlsx'  # noqa
 
     with pd.ExcelWriter(response, engine='openpyxl') as writer:
         df.to_excel(

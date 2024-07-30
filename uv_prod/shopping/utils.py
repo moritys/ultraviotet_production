@@ -27,7 +27,7 @@ def document_is_new(document):
 
 def calculate_components_for_document(document):
     """
-    Функция для подсчета количества компонентов 
+    Функция для подсчета количества компонентов
     для каждого нового документа по схеме.
     """
     board_quantities = {
@@ -39,7 +39,7 @@ def calculate_components_for_document(document):
     components_quantity = {}
 
     ordered_boards = {
-        board: quantity for board, quantity in board_quantities.items() if quantity > 0
+        board: quantity for board, quantity in board_quantities.items() if quantity > 0  # noqa
     }
 
     for board, quantity in ordered_boards.items():
@@ -57,6 +57,8 @@ def calculate_components_for_document(document):
                     'stock': component.quantity
                 }
 
-            components_quantity[component]['calculated'] += scheme.quantity * quantity
+            components_quantity[component]['calculated'] += (
+                scheme.quantity * quantity
+            )
 
     return components_quantity
