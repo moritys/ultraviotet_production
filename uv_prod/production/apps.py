@@ -7,4 +7,4 @@ class ProductionConfig(AppConfig):
     verbose_name = 'Каталог производства'
 
     def ready(self):
-        import production.signals
+        import production.signals  # noqa
