@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.11-slim
 
 RUN mkdir /app
 
@@ -12,4 +12,4 @@ COPY uv_prod/ /app
 
 WORKDIR /app
 
-CMD ["gunicorn", "uv_prod.wsgi:application", "--bind", "0:8000"]
+CMD ["python3", "manage.py", "runserver"]
