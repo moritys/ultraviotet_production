@@ -13,4 +13,4 @@ COPY uv_prod/ /app
 
 WORKDIR /app
 
-CMD ["gunicorn", "api_yamdb.wsgi:application", "--bind", "0:8000"]
+CMD ["gunicorn", "uv_prod.wsgi:application", "--bind", "0:8000"]
