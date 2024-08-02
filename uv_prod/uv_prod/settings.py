@@ -13,7 +13,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.99', 'localhost', '127.0.0.1', 'web']
 
-CSRF_TRUSTED_ORIGINS = ALLOWED_HOSTS.copy()
+CSRF_TRUSTED_ORIGINS = [
+    'http://*.192.168.1.99', 'http://127.0.0.1',
+]
 
 
 INSTALLED_APPS = [
