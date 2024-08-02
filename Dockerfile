@@ -7,7 +7,7 @@ COPY requirements.txt /app
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
     && python3 -m pip install pip --upgrade \
-    && apt-get install build-dep python-psycopg2 python3-dev \
+    && apt-get install build-dep python-psycopg2 python3-dev libpq5 \
     && pip3 install -r /app/requirements.txt --no-cache-dir
 
 COPY uv_prod/ /app
