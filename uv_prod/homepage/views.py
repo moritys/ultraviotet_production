@@ -1,7 +1,6 @@
-from django.shortcuts import render
-from django.db.models import F
-
 from catalog.models import Component
+from django.db.models import F
+from django.shortcuts import render
 
 
 def index(request):

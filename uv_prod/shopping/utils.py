@@ -1,4 +1,4 @@
-from production.models import Production, StageComponentBoardQuantity, Stage
+from production.models import Production, Stage, StageComponentBoardQuantity
 
 
 def document_is_new(document):

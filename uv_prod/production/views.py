@@ -57,7 +57,7 @@ def process_db_data(doc_number, slug):
         )
 
     total_quantity = sum(data['quantity'] for data in combined_data)
-    context = {
+    return {
         'board_list': board_list,
         'slug': slug if slug else None,
         'document': document,
@@ -66,7 +66,6 @@ def process_db_data(doc_number, slug):
         'total_quantity': total_quantity,
         'document_list': document_list,
     }
-    return context
 
 
 def process_db_data_document(doc_number):
@@ -79,11 +78,10 @@ def process_db_data_document(doc_number):
         document=document
     ).values('board__slug', 'board__name').distinct()
 
-    context = {
+    return {
         'board_list': board_list,
         'document': document,
     }
-    return context
 
 
 def process_production_form(request, board, stage, document):
@@ -143,7 +141,7 @@ def process_production_form(request, board, stage, document):
             'hidden_document': document
         })
 
-    return form
+    return form  # noqa
 
 
 def get_production_quantity(document_number=None):

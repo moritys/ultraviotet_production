@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import (
     Board, Document, Production,
-    Stage, StageComponentBoardQuantity
+    StageComponentBoardQuantity, Stage
 )
 
 

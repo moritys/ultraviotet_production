@@ -180,6 +180,6 @@ class StageComponentBoardQuantity(models.Model):
                 f'{self.component.name}, {self.quantity} шт.'
             )
         return (
-                f'{self.board.name} | {self.stage.name}: '
-                f'без компонентов'
-            )
+            f'{self.board.name} | {self.stage.name}: '
+            f'без компонентов'
+        )

@@ -1,10 +1,11 @@
-from django.shortcuts import render
-import pandas as pd
 from datetime import datetime
+
+import pandas as pd
 from django.http import HttpResponse
+from django.shortcuts import render
+from production.models import Document
 
 from .utils import calculate_components_for_document, document_is_new
-from production.models import Document
 
 
 def shopping(request):

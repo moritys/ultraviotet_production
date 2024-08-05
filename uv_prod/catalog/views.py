@@ -1,7 +1,7 @@
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
 
-from catalog.models import Component
+from .models import Component
 
 
 def catalog(request):

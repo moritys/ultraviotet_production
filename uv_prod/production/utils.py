@@ -1,9 +1,9 @@
-from django.shortcuts import get_object_or_404
-
-from production.models import (
-    Stage, Production, StageComponentBoardQuantity
-)
 from catalog.models import Component
+from production.models import (
+    Production, Stage, StageComponentBoardQuantity
+)
+
+from django.shortcuts import get_object_or_404
 
 
 def decrease_component_quantity(
