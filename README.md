@@ -1,3 +1,5 @@
+![workflow](https://github.com/moritys/ultraviotet_production/actions/workflows/main.yml/badge.svg)
+
 # ultraviolet_production
 
 ## Реализованный проект
