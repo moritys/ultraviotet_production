@@ -1,3 +1,6 @@
+я совсем дурак и не сразу поняла, что не могу деплоить на локальный сервер,
+так что данный воркфлоу будет работать только с глобальным ip
+
 ![workflow](https://github.com/moritys/ultraviotet_production/actions/workflows/main.yml/badge.svg)
 
 # ultraviolet_production
