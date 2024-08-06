@@ -3,6 +3,7 @@ from django.db import models
 
 class Component(models.Model):
     name = models.CharField(
+        unique=True,
         max_length=50,
         verbose_name='Название',
         help_text='Схема названия: "Part | Footprint"'
