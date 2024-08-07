@@ -1,6 +1,6 @@
 from catalog.models import Component
 from production.models import (
-    Production, Stage, StageComponentBoardQuantity
+    Production, StageComponentBoardQuantity
 )
 
 from django.shortcuts import get_object_or_404
@@ -59,7 +59,6 @@ def decrease_previous_stage_quantity(
     то изменения не сохраняются и в лог выводится ошибка. Возвращается False
     5. Если исключений не возникло, то возвращается True.
     '''
-    decrease_component_quantity(current_production, current_quantity)
     previous_stage_scheme = StageComponentBoardQuantity.objects.filter(
         board=current_production.board,
         stage__order__lt=current_production.stage.order
@@ -77,6 +76,9 @@ def decrease_previous_stage_quantity(
                 prev_quant = previous_production.quantity
                 previous_production.quantity -= current_quantity
                 previous_production.save()
+                decrease_component_quantity(
+                    current_production, current_quantity
+                )
             except Exception:
                 return (
                     f'Нельзя перевести "{previous_stage}" -> '
