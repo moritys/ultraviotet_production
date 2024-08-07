@@ -60,15 +60,18 @@ def decrease_previous_stage_quantity(
     5. Если исключений не возникло, то возвращается True.
     '''
     decrease_component_quantity(current_production, current_quantity)
-    previous_stage = Stage.objects.filter(
-        order=current_production.stage.order - 1
-    ).first()
-    if previous_stage:
+    previous_stage_scheme = StageComponentBoardQuantity.objects.filter(
+        board=current_production.board,
+        stage__order__lt=current_production.stage.order
+    ).order_by('-stage__order').first()
+    if previous_stage_scheme:
+        previous_stage = previous_stage_scheme.stage
         previous_production = Production.objects.filter(
             board=current_production.board,
             stage=previous_stage,
             document=current_production.document
         ).first()
+        print(previous_production)
         if previous_production:
             try:
                 prev_quant = previous_production.quantity
