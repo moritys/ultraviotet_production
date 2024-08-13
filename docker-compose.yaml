@@ -34,6 +34,18 @@ services:
     depends_on:
       - web
 
+  backup:
+    image: bitnami/minideb
+    volumes:
+      - ./backup.sh:/usr/local/bin/backup.sh
+      - backups:/backup
+    entrypoint: ["bash", "-c", "apt-get update && apt-get install -y cron && echo '0 0 * * * /usr/local/bin/backup.sh' > /etc/cron.d/db_backup && crontab /etc/cron.d/db_backup && cron -f"]
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
 volumes:
   static_value:
   media_value:
+  backups:
