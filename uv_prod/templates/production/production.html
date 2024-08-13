@@ -9,7 +9,7 @@
     <nav class="breadcrumb" aria-label="breadcrumbs">
       <ul>
         {% for doc in document_list %}
-          <li><a href="{% url 'production:document_production' number=doc.number %}">Приложение №{{ doc.number }}</a></li>
+          <li><a href="{% url 'production:document_production' number=doc.number %}">Приложение № {{ doc.number }}</a></li>
         {% endfor %}
       </ul>
     </nav>

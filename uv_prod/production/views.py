@@ -22,7 +22,9 @@ def process_db_data(doc_number, slug):
     production_data = Production.objects.filter(
         board=board, document=document
     ).select_related('stage')
-    document_list = Document.objects.all().values('number')
+    document_list = Document.objects.filter(
+        is_done=False
+    ).values('number')
 
     combined_data = []
     stage_components_map = {}
@@ -181,14 +183,18 @@ def production(request):
     document = '1'
     form = process_production_form(request, board, stage, document)
     context['form'] = form
-    context['document_list'] = Document.objects.all().values('number')
+    context['document_list'] = Document.objects.filter(
+        is_done=False
+    ).values('number')
     return render(request, template_name, context)
 
 
 def document_production(request, number):
     '''Функция для приложения.'''
     template_name = 'production/document.html'
-    document_list = Document.objects.all().values('number')
+    document_list = Document.objects.filter(
+        is_done=False
+    ).values('number')
 
     context = process_db_data_document(number)
     context['document_list'] = document_list
