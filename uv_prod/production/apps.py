@@ -5,3 +5,6 @@ class ProductionConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'production'
     verbose_name = 'Каталог производства'
+
+    def ready(self):
+        import production.signals  # noqa

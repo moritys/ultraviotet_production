@@ -1,14 +1,22 @@
-from pathlib import Path
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-3#8@r@1dqo0wv*nqfkdmjz^1v&j^qx=l&iud=l-t%o(hp9w01q'
+SECRET_KEY = 'django-insecure-3#8@r@1dqo0wv*nqfkdmjz^1v&j^qx=l&iud=l-t%o(hp9w01q'  # noqa
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.99', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.99', 'localhost', '127.0.0.1', 'web']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://*.192.168.1.99', 'http://127.0.0.1',
+]
 
 
 INSTALLED_APPS = [
@@ -62,24 +70,24 @@ STATICFILES_DIRS = [
 
 WSGI_APPLICATION = 'uv_prod.wsgi.application'
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+# else:
+DATABASES = {
+    'default': {
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT')
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': os.getenv('DB_ENGINE'),
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('POSTGRES_USER'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT')
-        }
-    }
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [

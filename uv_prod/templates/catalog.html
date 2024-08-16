@@ -15,18 +15,20 @@
 <section class="section">
   <div class="container">
     <div class="columns">
-      <div class="column is-two-thirds">
+      <div class="column is-four-fifths">
         <table class="table is-striped is-hoverable is-fullwidth">
           <thead>
             <tr>
-              <th>Наименование</th>
+              <th>Part | Footprint</th>
+              <th>PartNumber</th>
               <th>Количество на складе</th>
               <th>Критическое количество</th>
             </tr>
           </thead>
           <tfoot>
             <tr>
-              <th>Наименование</th>
+              <th>Part | Footprint</th>
+              <th>PartNumber</th>
               <th>Количество на складе</th>
               <th>Критическое количество</th>
             </tr>
@@ -56,6 +58,7 @@
                 '<tr class="is-danger">' + 
                   '<th><abbr title="' + item.description + '">'
                     + item.name + '</abbr></th>' + 
+                  '<td>' + item.part_number + '</td>' + 
                   '<td>' + item.quantity + '</td>' + 
                   '<td>' + item.critical_quantity + '</td>' + 
                 '</tr>'
@@ -65,6 +68,7 @@
                 '<tr>' + 
                   '<th><abbr title="' + item.description + '">'
                     + item.name + '</abbr></th>' + 
+                  '<td>' + item.part_number + '</td>' + 
                   '<td>' + item.quantity + '</td>' + 
                   '<td>' + item.critical_quantity + '</td>' + 
                 '</tr>'
