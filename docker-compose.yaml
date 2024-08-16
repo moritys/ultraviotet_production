@@ -3,6 +3,7 @@ version: '3.8'
 services:
 
   db:
+    container_name: db
     image: postgres:13.0-alpine
     volumes:
       - /var/lib/postgresql/data/
@@ -10,8 +11,11 @@ services:
       - ./.env
 
   web:
+    container_name: web
     build: .
     restart: always
+    ports:
+      - "8000:8000"
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
@@ -21,6 +25,7 @@ services:
       - ./.env
 
   nginx:
+    container_name: nginx
     image: nginx:1.21.3-alpine
     ports:
       - "80:80"
@@ -32,6 +37,19 @@ services:
     depends_on:
       - web
 
+  backup:
+    container_name: backup
+    image: bitnami/minideb
+    volumes:
+      - ./backup.sh:/usr/local/bin/backup.sh
+      - backups:/backup
+    entrypoint: ["bash", "-c", "apt-get update && apt-get install -y cron && echo '*/5 * * * /usr/local/bin/backup.sh' > /etc/cron.d/db_backup && crontab /etc/cron.d/db_backup && cron -f"]
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
 volumes:
   static_value:
   media_value:
+  backups:

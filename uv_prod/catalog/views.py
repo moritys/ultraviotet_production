@@ -1,7 +1,7 @@
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
 
-from catalog.models import Component
+from .models import Component
 
 
 def catalog(request):
@@ -19,6 +19,7 @@ def catalog_data(request):
             'quantity': component.quantity,
             'critical_quantity': component.critical_quantity,
             'description': component.description,
+            'part_number': component.part_number,
         } for component in catalog_data]
     }
 

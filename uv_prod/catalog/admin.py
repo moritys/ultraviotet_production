@@ -9,12 +9,13 @@ class ComponentAdmin(admin.ModelAdmin):
         'description',
         'quantity',
         'critical_quantity',
+        'part_number'
     )
     list_editable = (
         'quantity',
         'critical_quantity',
     )
-    search_fields = ('name',)
+    search_fields = ('name', 'part_number')
     list_display_links = ('name',)
 
 
